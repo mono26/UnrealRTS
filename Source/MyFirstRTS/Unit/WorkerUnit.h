@@ -72,6 +72,9 @@ public:
 
 	void OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result);
 
+	//UFUNCTION(BlueprintImplementableEvent, Category = "Worker|Movement")
+	//void OnStartedMovement();
+
 	void ExtractResource(AActor* ResourceRef);
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Gathering")
@@ -79,4 +82,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Attack")
 	void SetAttackTarget(AActor* TargetRef);
+
+	//UFUNCTION(BlueprintImplementableEvent, Category = "Worker|Movement")
+	//void StopAllActions();
 };

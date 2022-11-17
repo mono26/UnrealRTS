@@ -112,6 +112,10 @@ void AWorkerUnit::OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFoll
 	// delete request;
 }
 
+//void AWorkerUnit::OnStartedMovement()
+//{
+//}
+
 void AWorkerUnit::ExtractResource(AActor* ResourceRef)
 {
 	if (ResourceRef == nullptr) {
@@ -152,4 +156,8 @@ void AWorkerUnit::SetAttackTarget(AActor* TargetRef)
 		this->OnTargetChanged.Broadcast(oldTarget, this->AttackTargetRef);
 	}
 }
+
+//void AWorkerUnit::StopAllActions()
+//{
+//}
 
