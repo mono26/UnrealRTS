@@ -3,9 +3,9 @@
 
 #include "UnitCommand.h"
 
-UUnitCommand::UUnitCommand()
+UUnitCommand::UUnitCommand() : UUnitCommand(nullptr, FOnCommandUpdateSignature(), FOnCommandUpdateSignature())
 {
-	this->UnitRef = nullptr;
+
 }
 
 UUnitCommand::UUnitCommand(AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)

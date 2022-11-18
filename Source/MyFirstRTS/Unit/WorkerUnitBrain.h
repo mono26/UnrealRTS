@@ -30,16 +30,16 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "WorkerBrain")
+	UFUNCTION(BlueprintCallable, Category = "WorkerBrain|Sight")
 	AActor* GetNextTargetInSight();
+
+	UFUNCTION(BlueprintCallable, Category = "WorkerBrain|Sight")
+	void OnSightUpdated(AActor* Instigator);
 
 	UFUNCTION(BlueprintCallable, Category = "WorkerBrain") 
 	AActor* GetPlayerTownhall();
 
 	bool IsFromTheSameTeam(AActor* OtherRef);
-
-	UFUNCTION(BlueprintCallable, Category = "WorkerBrain")
-	void OnSightUpdated(AActor* Instigator);
 
 	UFUNCTION(BlueprintCallable, Category = "WorkerBrain")
 	AActor* SelectClosestActor(AActor* ActorARef, AActor* ActorBRef);

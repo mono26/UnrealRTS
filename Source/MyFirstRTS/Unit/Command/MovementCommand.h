@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UnitCommand.h"
+#include "../WorkerUnit.h"
 #include "MovementCommand.generated.h"
 
 /**
@@ -17,10 +18,15 @@ class MYFIRSTRTS_API UMovementCommand : public UUnitCommand
 protected:
 	FVector TargetPosition;
 
+	AWorkerUnit::FOnMovementUpdateSignature OnReachedPositionDelegate;
+	AWorkerUnit::FOnMovementUpdateSignature OnFailToReachPositionDelegate;
+
 public:
 	UMovementCommand();
-	UMovementCommand(AActor* UnitRef, FVector Position);
+	UMovementCommand(FVector Position, AActor* UnitRef, UUnitCommand::FOnCommandUpdateSignature OnSuccess, UUnitCommand::FOnCommandUpdateSignature OnFail);
 
 protected:
 	void Execute() override;
+	void OnReachedTargetPosition();
+	void OnFailToReachTargetPosition();
 };

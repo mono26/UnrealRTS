@@ -53,6 +53,16 @@ AActor* AWorkerUnit::GetAttackTarget()
 	return this->AttackTargetRef;
 }
 
+void AWorkerUnit::SetAttackTarget(AActor* TargetRef)
+{
+	AActor* oldTarget = this->AttackTargetRef;
+	this->AttackTargetRef = TargetRef;
+
+	if (this->OnTargetChanged.IsBound()) {
+		this->OnTargetChanged.Broadcast(oldTarget, this->AttackTargetRef);
+	}
+}
+
 void AWorkerUnit::MoveToPosition(FVector Position, FOnMovementUpdateSignature OnSuccess, FOnMovementUpdateSignature OnFail)
 {
 	if (this->GetController() == nullptr) {
@@ -147,14 +157,9 @@ void AWorkerUnit::OnResourceReached(AActor* ResourceRef)
 		}, 3, false);
 }
 
-void AWorkerUnit::SetAttackTarget(AActor* TargetRef)
+void AWorkerUnit::ExecuteCommand(UUnitCommand* Command)
 {
-	AActor* oldTarget = this->AttackTargetRef;
-	this->AttackTargetRef = TargetRef;
-
-	if (this->OnTargetChanged.IsBound()) {
-		this->OnTargetChanged.Broadcast(oldTarget, this->AttackTargetRef);
-	}
+	Command->Execute();
 }
 
 //void AWorkerUnit::StopAllActions()

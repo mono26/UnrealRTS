@@ -8,6 +8,7 @@
 #include "GameFramework/Character.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "../Resource/ResourceComponent.h"
+#include "../Unit/Command/UnitCommand.h"
 #include "WorkerUnit.generated.h"
 
 UCLASS()
@@ -15,6 +16,7 @@ class MYFIRSTRTS_API AWorkerUnit : public ACharacter
 {
 	GENERATED_BODY()
 
+public:
 	DECLARE_DYNAMIC_DELEGATE(FOnMovementUpdateSignature);
 	DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_TwoParams(FTargetChangedSignature, AWorkerUnit, OnTargetChanged, const AActor*, OldTarget, const AActor*, NewTarget);
 
@@ -64,6 +66,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Worker|Attack")
 	AActor* GetAttackTarget();
 
+	UFUNCTION(BlueprintCallable, Category = "Worker|Attack")
+	void SetAttackTarget(AActor* TargetRef);
+
 	UFUNCTION(BlueprintCallable, Category = "Worker|Movement")
 	void MoveToPosition(FVector Position, FOnMovementUpdateSignature OnSuccess, FOnMovementUpdateSignature OnFail);
 
@@ -80,8 +85,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Worker|Gathering")
 	void OnResourceReached(AActor* ResourceRef);
 
-	UFUNCTION(BlueprintCallable, Category = "Worker|Attack")
-	void SetAttackTarget(AActor* TargetRef);
+	UFUNCTION(BlueprintCallable, Category = "Worker|Commands")
+	void ExecuteCommand(UUnitCommand* Command);
 
 	//UFUNCTION(BlueprintImplementableEvent, Category = "Worker|Movement")
 	//void StopAllActions();

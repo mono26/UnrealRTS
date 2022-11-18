@@ -76,33 +76,6 @@ AActor* UWorkerUnitBrain::GetNextTargetInSight()
 	return targetRef;
 }
 
-AActor* UWorkerUnitBrain::GetPlayerTownhall()
-{
-	UWorld* world = this->GetWorld();
-	AGameModeBase* gameMode = world->GetAuthGameMode();
-	AMyFirstRTSGameMode* rtsMode = Cast<AMyFirstRTSGameMode>(gameMode);
-	if (rtsMode == nullptr) {
-		return nullptr;
-	}
-
-	return rtsMode->GetPlayerTownhall();
-}
-
-bool UWorkerUnitBrain::IsFromTheSameTeam(AActor* OtherRef)
-{
-	UTeamComponent* teamComponent = Cast<UTeamComponent>(this->GetOwner()->GetComponentByClass(UTeamComponent::StaticClass()));
-	if (OtherRef == nullptr || teamComponent == nullptr) {
-		return false;
-	}
-
-	UTeamComponent* otherTeamComponent = Cast<UTeamComponent>(OtherRef->GetComponentByClass(UTeamComponent::StaticClass()));
-	if (otherTeamComponent != nullptr) {
-		return teamComponent->TeamAttitude.GetValue() == otherTeamComponent->TeamAttitude.GetValue();
-	}
-
-	return false;
-}
-
 void UWorkerUnitBrain::OnSightUpdated(AActor* Instigator)
 {
 	if (Instigator == nullptr) {
@@ -149,6 +122,33 @@ void UWorkerUnitBrain::OnSightUpdated(AActor* Instigator)
 			asWorker->SetAttackTarget(this->SelectClosestActor(currentTarget, Instigator));
 		}
 	}
+}
+
+AActor* UWorkerUnitBrain::GetPlayerTownhall()
+{
+	UWorld* world = this->GetWorld();
+	AGameModeBase* gameMode = world->GetAuthGameMode();
+	AMyFirstRTSGameMode* rtsMode = Cast<AMyFirstRTSGameMode>(gameMode);
+	if (rtsMode == nullptr) {
+		return nullptr;
+	}
+
+	return rtsMode->GetPlayerTownhall();
+}
+
+bool UWorkerUnitBrain::IsFromTheSameTeam(AActor* OtherRef)
+{
+	UTeamComponent* teamComponent = Cast<UTeamComponent>(this->GetOwner()->GetComponentByClass(UTeamComponent::StaticClass()));
+	if (OtherRef == nullptr || teamComponent == nullptr) {
+		return false;
+	}
+
+	UTeamComponent* otherTeamComponent = Cast<UTeamComponent>(OtherRef->GetComponentByClass(UTeamComponent::StaticClass()));
+	if (otherTeamComponent != nullptr) {
+		return teamComponent->TeamAttitude.GetValue() == otherTeamComponent->TeamAttitude.GetValue();
+	}
+
+	return false;
 }
 
 AActor* UWorkerUnitBrain::SelectClosestActor(AActor* ActorARef, AActor* ActorBRef)

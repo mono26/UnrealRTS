@@ -15,6 +15,7 @@ class MYFIRSTRTS_API UUnitCommand : public UObject
 {
 	GENERATED_BODY()
 
+public:
 	DECLARE_DYNAMIC_DELEGATE(FOnCommandUpdateSignature);
 
 protected:
@@ -26,6 +27,6 @@ public:
 	UUnitCommand();
 	UUnitCommand(AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail);
 
-protected:
+public:
 	virtual void Execute();
 };
