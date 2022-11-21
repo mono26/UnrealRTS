@@ -8,7 +8,7 @@ UMovementCommand::UMovementCommand() : UUnitCommand()
 	this->TargetPosition = FVector::Zero();
 
 	this->OnReachedPositionDelegate.BindUFunction(this, FName("OnReachedTargetPosition"));
-	this->OnFailToReachPositionDelegate.BindUFunction(this, FName("OnFailToReachTargetPosition"));
+	this->OnReachPositionFailDelegate.BindUFunction(this, FName("OnFailToReachTargetPosition"));
 }
 
 void UMovementCommand::SetTargetPosition(FVector Position)
@@ -29,7 +29,7 @@ void UMovementCommand::Execute()
 		return;
 	}
 
-	asWorker->MoveToPosition(this->TargetPosition, this->OnReachedPositionDelegate, this->OnFailToReachPositionDelegate);
+	asWorker->MoveToPosition(this->TargetPosition, this->OnReachedPositionDelegate, this->OnReachPositionFailDelegate);
 }
 
 void UMovementCommand::OnReachedTargetPosition()
@@ -37,7 +37,7 @@ void UMovementCommand::OnReachedTargetPosition()
 	this->OnSuccess.ExecuteIfBound();
 }
 
-void UMovementCommand::OnFailToReachTargetPosition()
+void UMovementCommand::OnReachTargetPositionFail()
 {
 	this->OnFail.ExecuteIfBound();
 }

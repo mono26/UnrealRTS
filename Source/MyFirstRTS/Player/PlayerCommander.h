@@ -17,6 +17,9 @@ class MYFIRSTRTS_API APlayerCommander : public APlayerController
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
+	void ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail);
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
 	void ExecuteMovementCommand(FVector TargetPosition, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")

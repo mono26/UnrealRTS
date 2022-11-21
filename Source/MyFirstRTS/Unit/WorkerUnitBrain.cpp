@@ -19,6 +19,7 @@ UWorkerUnitBrain::UWorkerUnitBrain()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+	this->PerceptionComponent = nullptr;
 }
 
 

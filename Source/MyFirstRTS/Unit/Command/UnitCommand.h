@@ -26,9 +26,10 @@ public:
 	UUnitCommand();
 
 public:
-	void SetUnitRef(AActor* UnitRef);
-	void SetOnCommandSuccess(FOnCommandUpdateSignature OnSuccess);
-	void SetOnCommandFail(FOnCommandUpdateSignature OnFail);
-
 	virtual void Execute();
+
+public: 
+	void SetUnitRef(AActor* Unit);
+	void SetOnCommandSuccess(FOnCommandUpdateSignature Callback);
+	void SetOnCommandFail(FOnCommandUpdateSignature Callback);
 };

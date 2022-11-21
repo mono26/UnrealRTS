@@ -19,15 +19,17 @@ protected:
 	FVector TargetPosition;
 
 	AWorkerUnit::FOnMovementUpdateSignature OnReachedPositionDelegate;
-	AWorkerUnit::FOnMovementUpdateSignature OnFailToReachPositionDelegate;
+	AWorkerUnit::FOnMovementUpdateSignature OnReachPositionFailDelegate;
 
 public:
 	UMovementCommand();
 
 public:
+	void Execute() override;
+
+public:
 	void SetTargetPosition(FVector Position);
 
-	void Execute() override;
 	void OnReachedTargetPosition();
-	void OnFailToReachTargetPosition();
+	void OnReachTargetPositionFail();
 };
