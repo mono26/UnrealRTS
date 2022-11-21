@@ -15,7 +15,7 @@ UGatherCommand::UGatherCommand()
 
 void UGatherCommand::Execute()
 {
-	if (this->UnitRef == nullptr) {
+	if (this->ResourceRef == nullptr || this->UnitRef == nullptr) {
 		this->OnFail.ExecuteIfBound();
 		return;
 	}

@@ -32,7 +32,7 @@ void UAttackCommand::OnReachAttackTargetFail()
 
 void UAttackCommand::Execute()
 {
-	if (this->UnitRef == nullptr) {
+	if (this->AttackTargetRef == nullptr || this->UnitRef == nullptr) {
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
