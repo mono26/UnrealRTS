@@ -3,16 +3,17 @@
 #include "MovementCommand.h"
 #include "../WorkerUnit.h"
 
-UMovementCommand::UMovementCommand() : UMovementCommand(FVector::Zero(), nullptr, UUnitCommand::FOnCommandUpdateSignature(), UUnitCommand::FOnCommandUpdateSignature())
+UMovementCommand::UMovementCommand() : UUnitCommand()
 {
-}
-
-UMovementCommand::UMovementCommand(FVector TargetPosition, AActor* UnitRef, UUnitCommand::FOnCommandUpdateSignature OnSuccess, UUnitCommand::FOnCommandUpdateSignature OnFail) : UUnitCommand(UnitRef, OnSuccess, OnFail)
-{
-	this->TargetPosition = TargetPosition;
+	this->TargetPosition = FVector::Zero();
 
 	this->OnReachedPositionDelegate.BindUFunction(this, FName("OnReachedTargetPosition"));
 	this->OnFailToReachPositionDelegate.BindUFunction(this, FName("OnFailToReachTargetPosition"));
+}
+
+void UMovementCommand::SetTargetPosition(FVector Position)
+{
+	this->TargetPosition = Position;
 }
 
 void UMovementCommand::Execute()

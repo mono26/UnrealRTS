@@ -2,9 +2,40 @@
 
 
 #include "PlayerCommander.h"
+#include "../Unit/Command/MovementCommand.h"
+#include "../Unit/Command/StopCommand.h"
 
-UMovementCommand* APlayerCommander::CreateMovementCommand(FVector TargetPosition, AActor* UnitRef, UUnitCommand::FOnCommandUpdateSignature OnSuccess, UUnitCommand::FOnCommandUpdateSignature OnFail)
+void APlayerCommander::ExecuteMovementCommand(FVector TargetPosition, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)
 {
-	UMovementCommand movementCommmand = UMovementCommand(TargetPosition, UnitRef, OnSuccess, OnFail);
-	return &movementCommmand;
+	if (UnitRef == nullptr) {
+		return;
+	}
+
+	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
+	if (asWorker == nullptr) {
+		return;
+	}
+
+	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
+	movementCommmand->SetUnitRef(UnitRef);
+	movementCommmand->SetTargetPosition(TargetPosition);
+	movementCommmand->SetOnCommandSuccess(OnSuccess);
+	movementCommmand->SetOnCommandFail(OnFail);
+	asWorker->ExecuteCommand(movementCommmand);
+}
+
+void APlayerCommander::ExecuteStopCommand(AActor* UnitRef)
+{
+	if (UnitRef == nullptr) {
+		return;
+	}
+
+	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
+	if (asWorker == nullptr) {
+		return;
+	}
+
+	UStopCommand* stopCommand = NewObject<UStopCommand>();
+	stopCommand->SetUnitRef(UnitRef);
+	asWorker->ExecuteCommand(stopCommand);
 }

@@ -3,15 +3,23 @@
 
 #include "UnitCommand.h"
 
-UUnitCommand::UUnitCommand() : UUnitCommand(nullptr, FOnCommandUpdateSignature(), FOnCommandUpdateSignature())
+UUnitCommand::UUnitCommand() : UObject()
 {
-
+	this->UnitRef = nullptr;
 }
 
-UUnitCommand::UUnitCommand(AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)
+void UUnitCommand::SetUnitRef(AActor* UnitRef)
 {
 	this->UnitRef = UnitRef;
+}
+
+void UUnitCommand::SetOnCommandSuccess(FOnCommandUpdateSignature OnSuccess)
+{
 	this->OnSuccess = OnSuccess;
+}
+
+void UUnitCommand::SetOnCommandFail(FOnCommandUpdateSignature OnFail)
+{
 	this->OnFail = OnFail;
 }
 

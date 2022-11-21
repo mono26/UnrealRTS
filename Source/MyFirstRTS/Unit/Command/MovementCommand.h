@@ -23,9 +23,10 @@ protected:
 
 public:
 	UMovementCommand();
-	UMovementCommand(FVector Position, AActor* UnitRef, UUnitCommand::FOnCommandUpdateSignature OnSuccess, UUnitCommand::FOnCommandUpdateSignature OnFail);
 
-protected:
+public:
+	void SetTargetPosition(FVector Position);
+
 	void Execute() override;
 	void OnReachedTargetPosition();
 	void OnFailToReachTargetPosition();

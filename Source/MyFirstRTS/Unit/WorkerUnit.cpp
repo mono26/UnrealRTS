@@ -20,7 +20,12 @@ AWorkerUnit::AWorkerUnit()
 void AWorkerUnit::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	this->UnitComponent = Cast<UUnitComponent>(this->GetComponentByClass(UUnitComponent::StaticClass()));
+	if (this->UnitComponent == nullptr) {
+		return;
+	}
+
 	if (this->GetController() == nullptr) {
 		return;
 	}
@@ -92,6 +97,10 @@ void AWorkerUnit::MoveToPosition(FVector Position, FOnMovementUpdateSignature On
 		FAIRequestID requestID = pathComponent->GetCurrentRequestId();
 		FMovementRequest request = FMovementRequest(requestID.GetID(), OnSuccess, OnFail);
 		MovementRequest.Add(requestID.GetID(), request);
+
+		this->UnitComponent->SetCurrentState(EUnitStates::Moving);
+
+		this->OnStartMovement();
 	}
 }
 
@@ -122,7 +131,7 @@ void AWorkerUnit::OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFoll
 	// delete request;
 }
 
-//void AWorkerUnit::OnStartedMovement()
+//void AWorkerUnit::OnStartMovement()
 //{
 //}
 
@@ -162,7 +171,20 @@ void AWorkerUnit::ExecuteCommand(UUnitCommand* Command)
 	Command->Execute();
 }
 
-//void AWorkerUnit::StopAllActions()
-//{
-//}
+void AWorkerUnit::StopAllActions()
+{
+	if (this->GetController() == nullptr) {
+		return;
+	}
+
+	AAIController* controller = Cast<AAIController>(this->GetController());
+	if (controller == nullptr) {
+		return;
+	}
+
+	controller->StopMovement();
+	GetWorld()->GetTimerManager().ClearTimer(this->GatherTimerHandle);
+	this->UnitComponent->SetCurrentState(EUnitStates::Idle);
+	this->OnStopAll();
+}
 

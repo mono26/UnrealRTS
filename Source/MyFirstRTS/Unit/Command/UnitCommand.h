@@ -7,6 +7,8 @@
 #include "Delegates/Delegate.h"
 #include "UnitCommand.generated.h"
 
+DECLARE_DYNAMIC_DELEGATE(FOnCommandUpdateSignature);
+
 /**
  * 
  */
@@ -15,9 +17,6 @@ class MYFIRSTRTS_API UUnitCommand : public UObject
 {
 	GENERATED_BODY()
 
-public:
-	DECLARE_DYNAMIC_DELEGATE(FOnCommandUpdateSignature);
-
 protected:
 	AActor* UnitRef;
 	FOnCommandUpdateSignature OnSuccess;
@@ -25,8 +24,11 @@ protected:
 
 public:
 	UUnitCommand();
-	UUnitCommand(AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail);
 
 public:
+	void SetUnitRef(AActor* UnitRef);
+	void SetOnCommandSuccess(FOnCommandUpdateSignature OnSuccess);
+	void SetOnCommandFail(FOnCommandUpdateSignature OnFail);
+
 	virtual void Execute();
 };

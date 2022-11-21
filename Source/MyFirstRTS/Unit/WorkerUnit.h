@@ -8,6 +8,7 @@
 #include "GameFramework/Character.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "../Resource/ResourceComponent.h"
+#include "../Unit/UnitComponent.h"
 #include "../Unit/Command/UnitCommand.h"
 #include "WorkerUnit.generated.h"
 
@@ -39,6 +40,8 @@ public:
 	FTargetChangedSignature OnTargetChanged;
 
 private:
+	UUnitComponent* UnitComponent;
+
 	AActor* AttackTargetRef = nullptr;
 
 	TMap<uint32, FMovementRequest> MovementRequest;
@@ -77,8 +80,8 @@ public:
 
 	void OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result);
 
-	//UFUNCTION(BlueprintImplementableEvent, Category = "Worker|Movement")
-	//void OnStartedMovement();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Worker|Movement")
+	void OnStartMovement();
 
 	void ExtractResource(AActor* ResourceRef);
 
@@ -88,6 +91,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Worker|Commands")
 	void ExecuteCommand(UUnitCommand* Command);
 
-	//UFUNCTION(BlueprintImplementableEvent, Category = "Worker|Movement")
-	//void StopAllActions();
+	UFUNCTION(BlueprintCallable, Category = "Worker")
+	void StopAllActions();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Worker|Movement")
+	void OnStopAll();
 };
