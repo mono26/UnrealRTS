@@ -7,7 +7,7 @@
 
 void APlayerCommander::ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)
 {
-	if (UnitRef == nullptr) {
+	if (Target == nullptr || UnitRef == nullptr) {
 		return;
 	}
 
@@ -17,6 +17,20 @@ void APlayerCommander::ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FOn
 	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteAttackCommand"));
+}
+
+void APlayerCommander::ExecuteGatherCommand(AActor* Resource, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)
+{
+	if (Resource == nullptr || UnitRef == nullptr) {
+		return;
+	}
+
+	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
+	if (asWorker == nullptr) {
+		return;
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteGatherCommand"));
 }
 
 void APlayerCommander::ExecuteMovementCommand(FVector TargetPosition, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)

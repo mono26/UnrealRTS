@@ -20,6 +20,9 @@ public:
 	void ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
+	void ExecuteGatherCommand(AActor* Resource, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail);
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
 	void ExecuteMovementCommand(FVector TargetPosition, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")

@@ -83,10 +83,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Worker|Movement")
 	void OnStartMovement();
 
-	void ExtractResource(AActor* ResourceRef);
+	//void ExtractResource(AActor* ResourceRef);
 
-	UFUNCTION(BlueprintCallable, Category = "Worker|Gathering")
-	void OnResourceReached(AActor* ResourceRef);
+	//UFUNCTION(BlueprintCallable, Category = "Worker|Gathering")
+	//void OnResourceReached(AActor* ResourceRef);
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Commands")
 	void ExecuteCommand(UUnitCommand* Command);

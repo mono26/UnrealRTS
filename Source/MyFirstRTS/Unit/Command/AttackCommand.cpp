@@ -4,7 +4,6 @@
 #include "AttackCommand.h"
 #include "../WorkerUnit.h"
 #include "MovementCommand.h"
-#include "StopCommand.h"
 
 UAttackCommand::UAttackCommand() : UUnitCommand()
 {
@@ -26,22 +25,9 @@ void UAttackCommand::OnReachAttackTarget()
 
 void UAttackCommand::OnReachAttackTargetFail()
 {
-	if (this->UnitRef == nullptr) {
-		this->OnFail.ExecuteIfBound();
-		return;
-	}
-
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
-	if (asWorker == nullptr) {
-		this->OnFail.ExecuteIfBound();
-		return;
-	}
-
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnReachAttackTargetFail"));
 
-	UStopCommand* stopCommand = NewObject<UStopCommand>();
-	stopCommand->SetUnitRef(this->UnitRef);
-	asWorker->ExecuteCommand(stopCommand);
+	this->OnFail.ExecuteIfBound();
 }
 
 void UAttackCommand::Execute()
@@ -56,6 +42,8 @@ void UAttackCommand::Execute()
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
+
+	asWorker->SetAttackTarget(this->AttackTargetRef);
 
 	// TODO move to target
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();

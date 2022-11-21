@@ -135,36 +135,36 @@ void AWorkerUnit::OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFoll
 //{
 //}
 
-void AWorkerUnit::ExtractResource(AActor* ResourceRef)
-{
-	if (ResourceRef == nullptr) {
-		return;
-	}
-
-	UResourceComponent* resourceComponent = Cast<UResourceComponent>(ResourceRef->GetComponentByClass(UResourceComponent::StaticClass()));
-	if (resourceComponent == nullptr) {
-		return;
-	}
-}
-
-void AWorkerUnit::OnResourceReached(AActor* ResourceRef)
-{
-	if (ResourceRef == nullptr) {
-		return;
-	}
-
-	UResourceComponent* resourceComponent = Cast<UResourceComponent>(ResourceRef->GetComponentByClass(UResourceComponent::StaticClass()));
-	if (resourceComponent == nullptr) {
-		return;
-	}
-
-	GetWorld()->GetTimerManager().ClearTimer(this->GatherTimerHandle);
-	GetWorld()->GetTimerManager().SetTimer(this->GatherTimerHandle, [&]()
-		{
-			// Extract the resource.
-			this->ExtractResource(ResourceRef);
-		}, 3, false);
-}
+//void AWorkerUnit::ExtractResource(AActor* ResourceRef)
+//{
+//	if (ResourceRef == nullptr) {
+//		return;
+//	}
+//
+//	UResourceComponent* resourceComponent = Cast<UResourceComponent>(ResourceRef->GetComponentByClass(UResourceComponent::StaticClass()));
+//	if (resourceComponent == nullptr) {
+//		return;
+//	}
+//}
+//
+//void AWorkerUnit::OnResourceReached(AActor* ResourceRef)
+//{
+//	if (ResourceRef == nullptr) {
+//		return;
+//	}
+//
+//	UResourceComponent* resourceComponent = Cast<UResourceComponent>(ResourceRef->GetComponentByClass(UResourceComponent::StaticClass()));
+//	if (resourceComponent == nullptr) {
+//		return;
+//	}
+//
+//	GetWorld()->GetTimerManager().ClearTimer(this->GatherTimerHandle);
+//	GetWorld()->GetTimerManager().SetTimer(this->GatherTimerHandle, [&]()
+//		{
+//			// Extract the resource.
+//			this->ExtractResource(ResourceRef);
+//		}, 3, false);
+//}
 
 void AWorkerUnit::ExecuteCommand(UUnitCommand* Command)
 {
