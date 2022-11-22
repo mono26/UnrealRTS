@@ -27,4 +27,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
 	void ExecuteStopCommand(AActor* UnitRef);
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
+	void ExecuteStoreCommand(AActor* Storage, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail);
+
+
+	UFUNCTION(BlueprintCallable, Category = "WorkerBrain")
+	AActor* GetPlayerTownhall();
 };

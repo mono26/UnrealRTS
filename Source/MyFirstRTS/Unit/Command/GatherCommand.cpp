@@ -15,7 +15,7 @@ UGatherCommand::UGatherCommand()
 
 void UGatherCommand::Execute()
 {
-	if (this->ResourceRef == nullptr || this->UnitRef == nullptr) {
+	if (this->UnitRef == nullptr) {
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
@@ -26,10 +26,16 @@ void UGatherCommand::Execute()
 		return;
 	}
 
+	asWorker->SetResource(this->ResourceRef != nullptr ? this->ResourceRef : asWorker->GetResource());
+	if (asWorker->GetResource() == nullptr) {
+		this->OnFail.ExecuteIfBound();
+		return;
+	}
+
 	// TODO move to target
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnitRef(this->UnitRef);
-	movementCommmand->SetTargetPosition(this->ResourceRef->GetActorLocation());
+	movementCommmand->SetTargetPosition(asWorker->GetResource()->GetActorLocation());
 	movementCommmand->SetOnCommandSuccess(this->OnReachResourceDelegate);
 	movementCommmand->SetOnCommandFail(this->OnReachResourceFailDelegate);
 	asWorker->ExecuteCommand(movementCommmand);

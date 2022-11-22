@@ -40,15 +40,16 @@ public:
 	FTargetChangedSignature OnTargetChanged;
 
 private:
-	UUnitComponent* UnitComponent;
+	UUnitComponent* UnitComponent = nullptr;
 
 	AActor* AttackTargetRef = nullptr;
 
 	TMap<uint32, FMovementRequest> MovementRequest;
 
-	uint32 CarriedResourceAmount;
-	EResourceType CarriedResource;
+	uint32 CarriedResourceAmount = 0;
+	EResourceType CarriedResource = EResourceType::None;
 	FTimerHandle GatherTimerHandle;
+	AActor* ResourceRef = nullptr;
 
 public:
 	// Sets default values for this character's properties
@@ -70,7 +71,7 @@ public:
 	AActor* GetAttackTarget();
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Attack")
-	void SetAttackTarget(AActor* TargetRef);
+	void SetAttackTarget(AActor* Target);
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Movement")
 	void MoveToPosition(FVector Position, FOnMovementUpdateSignature OnSuccess, FOnMovementUpdateSignature OnFail);
@@ -83,6 +84,11 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Worker|Movement")
 	void OnStartMovement();
 
+	UFUNCTION(BlueprintCallable, Category = "Worker|Gathering")
+	AActor* GetResource();
+
+	UFUNCTION(BlueprintCallable, Category = "Worker|Gathering")
+	void SetResource(AActor* Resource);
 	//void ExtractResource(AActor* ResourceRef);
 
 	//UFUNCTION(BlueprintCallable, Category = "Worker|Gathering")
@@ -94,6 +100,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Worker")
 	void StopAllActions();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Worker|Movement")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Worker")
 	void OnStopAll();
 };

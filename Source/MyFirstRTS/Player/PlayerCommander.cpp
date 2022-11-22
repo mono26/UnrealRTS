@@ -4,13 +4,10 @@
 #include "PlayerCommander.h"
 #include "../Unit/Command/MovementCommand.h"
 #include "../Unit/Command/StopCommand.h"
+#include "../Game/MyFirstRTSGameMode.h"
 
 void APlayerCommander::ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)
 {
-	if (Target == nullptr || UnitRef == nullptr) {
-		return;
-	}
-
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
 	if (asWorker == nullptr) {
 		return;
@@ -21,10 +18,6 @@ void APlayerCommander::ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FOn
 
 void APlayerCommander::ExecuteGatherCommand(AActor* Resource, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)
 {
-	if (Resource == nullptr || UnitRef == nullptr) {
-		return;
-	}
-
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
 	if (asWorker == nullptr) {
 		return;
@@ -35,10 +28,6 @@ void APlayerCommander::ExecuteGatherCommand(AActor* Resource, AActor* UnitRef, F
 
 void APlayerCommander::ExecuteMovementCommand(FVector TargetPosition, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)
 {
-	if (UnitRef == nullptr) {
-		return;
-	}
-
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
 	if (asWorker == nullptr) {
 		return;
@@ -56,10 +45,6 @@ void APlayerCommander::ExecuteMovementCommand(FVector TargetPosition, AActor* Un
 
 void APlayerCommander::ExecuteStopCommand(AActor* UnitRef)
 {
-	if (UnitRef == nullptr) {
-		return;
-	}
-
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
 	if (asWorker == nullptr) {
 		return;
@@ -70,4 +55,26 @@ void APlayerCommander::ExecuteStopCommand(AActor* UnitRef)
 	UStopCommand* stopCommand = NewObject<UStopCommand>();
 	stopCommand->SetUnitRef(UnitRef);
 	asWorker->ExecuteCommand(stopCommand);
+}
+
+void APlayerCommander::ExecuteStoreCommand(AActor* Storage, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)
+{
+	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
+	if (asWorker == nullptr) {
+		return;
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteStoreCommand"));
+}
+
+AActor* APlayerCommander::GetPlayerTownhall()
+{
+	UWorld* world = this->GetWorld();
+	AGameModeBase* gameMode = world->GetAuthGameMode();
+	AMyFirstRTSGameMode* rtsMode = Cast<AMyFirstRTSGameMode>(gameMode);
+	if (rtsMode == nullptr) {
+		return nullptr;
+	}
+
+	return rtsMode->GetPlayerTownhall();
 }

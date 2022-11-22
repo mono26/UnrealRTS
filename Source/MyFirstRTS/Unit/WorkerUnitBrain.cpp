@@ -56,6 +56,10 @@ AActor* UWorkerUnitBrain::GetNextTargetInSight()
 
 	AActor* targetRef = nullptr;
 	for (AActor* actor : possibleTargets) {
+		if (!this->IsFromTheSameTeam(actor)) {
+			continue;
+		}
+
 		if (targetRef == nullptr) {
 			targetRef = actor;
 			continue;
@@ -84,6 +88,7 @@ void UWorkerUnitBrain::OnSightUpdated(AActor* Instigator)
 	}
 
 	if (this->IsFromTheSameTeam(Instigator)) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Can't target the same team."));
 		return;
 	}
 

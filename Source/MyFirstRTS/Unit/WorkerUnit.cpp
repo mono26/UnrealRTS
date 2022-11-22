@@ -58,10 +58,10 @@ AActor* AWorkerUnit::GetAttackTarget()
 	return this->AttackTargetRef;
 }
 
-void AWorkerUnit::SetAttackTarget(AActor* TargetRef)
+void AWorkerUnit::SetAttackTarget(AActor* Target)
 {
 	AActor* oldTarget = this->AttackTargetRef;
-	this->AttackTargetRef = TargetRef;
+	this->AttackTargetRef = Target;
 
 	if (this->OnTargetChanged.IsBound()) {
 		this->OnTargetChanged.Broadcast(oldTarget, this->AttackTargetRef);
@@ -131,9 +131,15 @@ void AWorkerUnit::OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFoll
 	// delete request;
 }
 
-//void AWorkerUnit::OnStartMovement()
-//{
-//}
+AActor* AWorkerUnit::GetResource()
+{
+	return this->ResourceRef;
+}
+
+void AWorkerUnit::SetResource(AActor* Resource)
+{
+	this->ResourceRef = Resource;
+}
 
 //void AWorkerUnit::ExtractResource(AActor* ResourceRef)
 //{
