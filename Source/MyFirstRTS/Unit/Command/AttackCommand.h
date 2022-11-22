@@ -27,8 +27,10 @@ public:
 	void Execute() override;
 
 public:
-	void SetTargetRef(AActor* Target);
+	void SetAttackTarget(AActor* Target);
 
+	UFUNCTION()
 	void OnReachAttackTarget();
+	UFUNCTION()
 	void OnReachAttackTargetFail();
 };

@@ -13,7 +13,7 @@ UAttackCommand::UAttackCommand() : UUnitCommand()
 	this->OnReachAttackTargetFailDelegate.BindUFunction(this, FName("OnReachAttackTargetFail"));
 }
 
-void UAttackCommand::SetTargetRef(AActor* Target)
+void UAttackCommand::SetAttackTarget(AActor* Target)
 {
 	this->AttackTargetRef = Target;
 }
@@ -32,7 +32,8 @@ void UAttackCommand::OnReachAttackTargetFail()
 
 void UAttackCommand::Execute()
 {
-	if (this->AttackTargetRef == nullptr || this->UnitRef == nullptr) {
+	// TODO uncomment this.
+	if (/*this->AttackTargetRef == nullptr || */this->UnitRef == nullptr) {
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
@@ -43,11 +44,18 @@ void UAttackCommand::Execute()
 		return;
 	}
 
-	asWorker->SetAttackTarget(this->AttackTargetRef);
+	// TODO don't do it like this always use the resource from the commmand.
+	asWorker->SetAttackTarget(this->AttackTargetRef != nullptr ? this->AttackTargetRef : asWorker->GetAttackTarget());
+	if (asWorker->GetAttackTarget() == nullptr) {
+		this->OnFail.ExecuteIfBound();
+		return;
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteAttackCommand"));
 
 	// TODO move to target
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
-	movementCommmand->SetUnitRef(this->UnitRef);
+	movementCommmand->SetUnit(this->UnitRef);
 	movementCommmand->SetTargetPosition(this->AttackTargetRef->GetActorLocation());
 	movementCommmand->SetOnCommandSuccess(this->OnReachAttackTargetDelegate);
 	movementCommmand->SetOnCommandFail(this->OnReachAttackTargetFailDelegate);

@@ -19,6 +19,7 @@ class MYFIRSTRTS_API UUnitCommand : public UObject
 
 protected:
 	AActor* UnitRef;
+	// TODO use events instead.
 	FOnCommandUpdateSignature OnSuccess;
 	FOnCommandUpdateSignature OnFail;
 
@@ -29,7 +30,7 @@ public:
 	virtual void Execute();
 
 public: 
-	void SetUnitRef(AActor* Unit);
+	void SetUnit(AActor* Unit);
 	void SetOnCommandSuccess(FOnCommandUpdateSignature Callback);
 	void SetOnCommandFail(FOnCommandUpdateSignature Callback);
 };

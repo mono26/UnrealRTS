@@ -10,10 +10,12 @@
 // Sets default values
 AWorkerUnit::AWorkerUnit()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	this->AttackTargetRef = nullptr;
+
+	this->GatherTimer = nullptr;
 }
 
 // Called when the game starts or when spawned
@@ -21,19 +23,11 @@ void AWorkerUnit::BeginPlay()
 {
 	Super::BeginPlay();
 
-	this->UnitComponent = Cast<UUnitComponent>(this->GetComponentByClass(UUnitComponent::StaticClass()));
-	if (this->UnitComponent == nullptr) {
-		return;
-	}
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, this->GetActorNameOrLabel());
 
-	if (this->GetController() == nullptr) {
-		return;
-	}
+	this->UnitComponent = Cast<UUnitComponent>(this->GetComponentByClass(UUnitComponent::StaticClass()));
 
 	AAIController* controller = Cast<AAIController>(this->GetController());
-	if (controller == nullptr) {
-		return;
-	}
 
 	UPathFollowingComponent* pathComponent = controller->GetPathFollowingComponent();
 	pathComponent->OnRequestFinished.AddUObject(this, &AWorkerUnit::OnMoveRequestCompleted);
@@ -58,17 +52,17 @@ AActor* AWorkerUnit::GetAttackTarget()
 	return this->AttackTargetRef;
 }
 
-void AWorkerUnit::SetAttackTarget(AActor* Target)
+void AWorkerUnit::SetAttackTarget(AActor* AttackTarget)
 {
 	AActor* oldTarget = this->AttackTargetRef;
-	this->AttackTargetRef = Target;
+	this->AttackTargetRef = AttackTarget;
 
 	if (this->OnTargetChanged.IsBound()) {
 		this->OnTargetChanged.Broadcast(oldTarget, this->AttackTargetRef);
 	}
 }
 
-void AWorkerUnit::MoveToPosition(FVector Position, FOnMovementUpdateSignature OnSuccess, FOnMovementUpdateSignature OnFail)
+void AWorkerUnit::MoveToPosition(FVector Position, FVoidSignature OnSuccess, FVoidSignature OnFail)
 {
 	if (this->GetController() == nullptr) {
 		return;
@@ -82,10 +76,10 @@ void AWorkerUnit::MoveToPosition(FVector Position, FOnMovementUpdateSignature On
 	UPathFollowingComponent* pathComponent = controller->GetPathFollowingComponent();
 
 	EPathFollowingRequestResult::Type requestResult = controller->MoveToLocation(
-		Position, 
+		Position,
 		50.0f /*TODO use interactable size.*/,
 		false
-		);
+	);
 
 	if (requestResult == EPathFollowingRequestResult::Failed) {
 		OnFail.ExecuteIfBound();
@@ -104,7 +98,7 @@ void AWorkerUnit::MoveToPosition(FVector Position, FOnMovementUpdateSignature On
 	}
 }
 
-void AWorkerUnit::MoveToActor(AActor* ActorRef, FOnMovementUpdateSignature OnSuccess, FOnMovementUpdateSignature OnFail)
+void AWorkerUnit::MoveToActor(AActor* ActorRef, FVoidSignature OnSuccess, FVoidSignature OnFail)
 {
 	this->MoveToPosition(ActorRef->GetActorLocation(), OnSuccess, OnFail);
 }
@@ -113,6 +107,7 @@ void AWorkerUnit::OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFoll
 {
 	uint32 id = RequestID.GetID();
 	if (!MovementRequest.Contains(id)) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No request found."));
 		return;
 	}
 
@@ -133,44 +128,29 @@ void AWorkerUnit::OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFoll
 
 AActor* AWorkerUnit::GetResource()
 {
-	return this->ResourceRef;
+	return this->TargetResourceRef;
 }
 
-void AWorkerUnit::SetResource(AActor* Resource)
+void AWorkerUnit::SetTargetResource(AActor* TargetResource)
 {
-	this->ResourceRef = Resource;
+	this->TargetResourceRef = TargetResource;
 }
 
-//void AWorkerUnit::ExtractResource(AActor* ResourceRef)
-//{
-//	if (ResourceRef == nullptr) {
-//		return;
-//	}
-//
-//	UResourceComponent* resourceComponent = Cast<UResourceComponent>(ResourceRef->GetComponentByClass(UResourceComponent::StaticClass()));
-//	if (resourceComponent == nullptr) {
-//		return;
-//	}
-//}
-//
-//void AWorkerUnit::OnResourceReached(AActor* ResourceRef)
-//{
-//	if (ResourceRef == nullptr) {
-//		return;
-//	}
-//
-//	UResourceComponent* resourceComponent = Cast<UResourceComponent>(ResourceRef->GetComponentByClass(UResourceComponent::StaticClass()));
-//	if (resourceComponent == nullptr) {
-//		return;
-//	}
-//
-//	GetWorld()->GetTimerManager().ClearTimer(this->GatherTimerHandle);
-//	GetWorld()->GetTimerManager().SetTimer(this->GatherTimerHandle, [&]()
-//		{
-//			// Extract the resource.
-//			this->ExtractResource(ResourceRef);
-//		}, 3, false);
-//}
+void AWorkerUnit::ExtractResource(AActor* ResourceRef, FVoidSignature OnSuccess, FVoidSignature OnFail)
+{
+	if (ResourceRef == nullptr) {
+		OnFail.ExecuteIfBound();
+		return;
+	}
+
+	UResourceComponent* resourceComponent = Cast<UResourceComponent>(ResourceRef->GetComponentByClass(UResourceComponent::StaticClass()));
+	if (resourceComponent == nullptr) {
+		OnFail.ExecuteIfBound();
+		return;
+	}
+
+	this->GatherTimer = new FTimerWithCallback(3.0f, OnSuccess, OnFail);
+}
 
 void AWorkerUnit::ExecuteCommand(UUnitCommand* Command)
 {
@@ -189,8 +169,13 @@ void AWorkerUnit::StopAllActions()
 	}
 
 	controller->StopMovement();
-	GetWorld()->GetTimerManager().ClearTimer(this->GatherTimerHandle);
+
+	if (this->GatherTimer != nullptr) {
+		this->GatherTimer->Stop();
+	}
+
 	this->UnitComponent->SetCurrentState(EUnitStates::Idle);
+
 	this->OnStopAll();
 }
 

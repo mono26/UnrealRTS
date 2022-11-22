@@ -18,8 +18,8 @@ class MYFIRSTRTS_API UMovementCommand : public UUnitCommand
 protected:
 	FVector TargetPosition;
 
-	AWorkerUnit::FOnMovementUpdateSignature OnReachedPositionDelegate;
-	AWorkerUnit::FOnMovementUpdateSignature OnReachPositionFailDelegate;
+	FVoidSignature OnReachedPositionDelegate;
+	FVoidSignature OnReachPositionFailDelegate;
 
 public:
 	UMovementCommand();
@@ -30,6 +30,8 @@ public:
 public:
 	void SetTargetPosition(FVector Position);
 
-	void OnReachedTargetPosition();
+	UFUNCTION()
+	void OnReachTargetPosition();
+	UFUNCTION()
 	void OnReachTargetPositionFail();
 };

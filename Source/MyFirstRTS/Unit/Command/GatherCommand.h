@@ -27,8 +27,10 @@ public:
 	void Execute() override;
 
 public:
-	void SetResourceRef(AActor* Resource);
+	void SetResource(AActor* Resource);
 
+	UFUNCTION()
 	void OnReachResource();
+	UFUNCTION()
 	void OnReachResourceFail();
 };

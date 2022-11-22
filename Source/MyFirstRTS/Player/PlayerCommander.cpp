@@ -5,6 +5,7 @@
 #include "../Unit/Command/MovementCommand.h"
 #include "../Unit/Command/StopCommand.h"
 #include "../Game/MyFirstRTSGameMode.h"
+#include "../Unit/Command/GatherCommand.h"
 
 void APlayerCommander::ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)
 {
@@ -12,8 +13,6 @@ void APlayerCommander::ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FOn
 	if (asWorker == nullptr) {
 		return;
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteAttackCommand"));
 }
 
 void APlayerCommander::ExecuteGatherCommand(AActor* Resource, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)
@@ -23,7 +22,12 @@ void APlayerCommander::ExecuteGatherCommand(AActor* Resource, AActor* UnitRef, F
 		return;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteGatherCommand"));
+	UGatherCommand* gatherCommand = NewObject<UGatherCommand>();
+	gatherCommand->SetUnit(UnitRef);
+	gatherCommand->SetResource(Resource);
+	gatherCommand->SetOnCommandSuccess(OnSuccess);
+	gatherCommand->SetOnCommandFail(OnFail);
+	asWorker->ExecuteCommand(gatherCommand);
 }
 
 void APlayerCommander::ExecuteMovementCommand(FVector TargetPosition, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)
@@ -33,10 +37,8 @@ void APlayerCommander::ExecuteMovementCommand(FVector TargetPosition, AActor* Un
 		return;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteMovementCommand"));
-
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
-	movementCommmand->SetUnitRef(UnitRef);
+	movementCommmand->SetUnit(UnitRef);
 	movementCommmand->SetTargetPosition(TargetPosition);
 	movementCommmand->SetOnCommandSuccess(OnSuccess);
 	movementCommmand->SetOnCommandFail(OnFail);
@@ -53,7 +55,7 @@ void APlayerCommander::ExecuteStopCommand(AActor* UnitRef)
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteStopCommand"));
 
 	UStopCommand* stopCommand = NewObject<UStopCommand>();
-	stopCommand->SetUnitRef(UnitRef);
+	stopCommand->SetUnit(UnitRef);
 	asWorker->ExecuteCommand(stopCommand);
 }
 

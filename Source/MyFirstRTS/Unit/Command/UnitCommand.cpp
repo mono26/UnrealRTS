@@ -6,11 +6,9 @@
 UUnitCommand::UUnitCommand() : UObject()
 {
 	this->UnitRef = nullptr;
-	this->OnSuccess = FOnCommandUpdateSignature();
-	this->OnFail = FOnCommandUpdateSignature();
 }
 
-void UUnitCommand::SetUnitRef(AActor* Unit)
+void UUnitCommand::SetUnit(AActor* Unit)
 {
 	this->UnitRef = Unit;
 }

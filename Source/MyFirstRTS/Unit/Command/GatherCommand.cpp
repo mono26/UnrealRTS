@@ -15,7 +15,8 @@ UGatherCommand::UGatherCommand()
 
 void UGatherCommand::Execute()
 {
-	if (this->UnitRef == nullptr) {
+	// TODO uncomment this.
+	if (/*this->ResourceRef == nullptr || */this->UnitRef == nullptr) {
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
@@ -26,23 +27,25 @@ void UGatherCommand::Execute()
 		return;
 	}
 
-	asWorker->SetResource(this->ResourceRef != nullptr ? this->ResourceRef : asWorker->GetResource());
+	// TODO don't do it like this always use the resource from the commmand.
+	asWorker->SetTargetResource(this->ResourceRef != nullptr ? this->ResourceRef : asWorker->GetResource());
 	if (asWorker->GetResource() == nullptr) {
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
 
-	// TODO move to target
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteGatherCommand"));
+
+	// TODO move to resource
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
-	movementCommmand->SetUnitRef(this->UnitRef);
+	movementCommmand->SetUnit(this->UnitRef);
 	movementCommmand->SetTargetPosition(asWorker->GetResource()->GetActorLocation());
 	movementCommmand->SetOnCommandSuccess(this->OnReachResourceDelegate);
 	movementCommmand->SetOnCommandFail(this->OnReachResourceFailDelegate);
 	asWorker->ExecuteCommand(movementCommmand);
-	// TODO extract resource
 }
 
-void UGatherCommand::SetResourceRef(AActor* Resource)
+void UGatherCommand::SetResource(AActor* Resource)
 {
 	this->ResourceRef = Resource;
 }
@@ -50,6 +53,8 @@ void UGatherCommand::SetResourceRef(AActor* Resource)
 void UGatherCommand::OnReachResource()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnReachResource"));
+
+	// TODO extract resource
 }
 
 void UGatherCommand::OnReachResourceFail()
