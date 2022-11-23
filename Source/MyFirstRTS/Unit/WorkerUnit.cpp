@@ -62,7 +62,7 @@ void AWorkerUnit::SetAttackTarget(AActor* AttackTarget)
 	}
 }
 
-void AWorkerUnit::MoveToPosition(FVector Position, FVoidSignature OnSuccess, FVoidSignature OnFail)
+void AWorkerUnit::MoveToPosition(FVector Position, FActionSignature OnSuccess, FActionSignature OnFail)
 {
 	if (this->GetController() == nullptr) {
 		return;
@@ -98,7 +98,7 @@ void AWorkerUnit::MoveToPosition(FVector Position, FVoidSignature OnSuccess, FVo
 	}
 }
 
-void AWorkerUnit::MoveToActor(AActor* ActorRef, FVoidSignature OnSuccess, FVoidSignature OnFail)
+void AWorkerUnit::MoveToActor(AActor* ActorRef, FActionSignature OnSuccess, FActionSignature OnFail)
 {
 	this->MoveToPosition(ActorRef->GetActorLocation(), OnSuccess, OnFail);
 }
@@ -136,20 +136,26 @@ void AWorkerUnit::SetTargetResource(AActor* TargetResource)
 	this->TargetResourceRef = TargetResource;
 }
 
-void AWorkerUnit::ExtractResource(AActor* ResourceRef, FVoidSignature OnSuccess, FVoidSignature OnFail)
+void AWorkerUnit::ExtractResource(AActor* ResourceRef, FActionSignature OnSuccess, FActionSignature OnFail)
 {
 	if (ResourceRef == nullptr) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No resource actor."));
+
 		OnFail.ExecuteIfBound();
 		return;
 	}
 
 	UResourceComponent* resourceComponent = Cast<UResourceComponent>(ResourceRef->GetComponentByClass(UResourceComponent::StaticClass()));
 	if (resourceComponent == nullptr) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No resource component."));
+
 		OnFail.ExecuteIfBound();
 		return;
 	}
 
-	this->GatherTimer = new FTimerWithCallback(3.0f, OnSuccess, OnFail);
+	this->GatherTimer = new FExtendedTimer(&GetWorld()->GetTimerManager(), 3.0f, OnSuccess, OnFail);
+
+	this->UnitComponent->SetCurrentState(EUnitStates::Gathering);
 }
 
 void AWorkerUnit::ExecuteCommand(UUnitCommand* Command)

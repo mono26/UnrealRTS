@@ -17,6 +17,8 @@ class MYFIRSTRTS_API UStoreCommand : public UGatherCommand
 protected:
 	AActor* StorageRef;
 
+	FActionSignature OnReachStorageDelegate;
+
 public:
 	UStoreCommand();
 
@@ -25,4 +27,7 @@ public:
 
 public:
 	void SetStorage(AActor* Storage);
+
+	UFUNCTION()
+	void OnReachStorage();
 };

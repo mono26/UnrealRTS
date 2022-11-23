@@ -17,19 +17,19 @@ class MYFIRSTRTS_API APlayerCommander : public APlayerController
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
-	void ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail);
+	void ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
-	void ExecuteGatherCommand(AActor* Resource, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail);
+	void ExecuteGatherCommand(AActor* Resource, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
-	void ExecuteMovementCommand(FVector TargetPosition, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail);
+	void ExecuteMovementCommand(FVector TargetPosition, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
 	void ExecuteStopCommand(AActor* UnitRef);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
-	void ExecuteStoreCommand(AActor* Storage, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail);
+	void ExecuteStoreCommand(AActor* Storage, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail);
 
 
 	UFUNCTION(BlueprintCallable, Category = "WorkerBrain")

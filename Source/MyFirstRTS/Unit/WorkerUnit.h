@@ -12,7 +12,6 @@
 #include "../Unit/Command/UnitCommand.h"
 #include "WorkerUnit.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE(FVoidSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTargetChangedSignature, const AActor*, OldTarget, const AActor*, NewTarget);
 
 struct FMovementRequest
@@ -20,15 +19,15 @@ struct FMovementRequest
 public:
 	uint32 requestId;
 
-	FVoidSignature OnSuccess;
-	FVoidSignature OnFail;
+	FActionSignature OnSuccess;
+	FActionSignature OnFail;
 
 	FMovementRequest()
 	{
 
 	}
 
-	FMovementRequest(int requestId, FVoidSignature OnSuccess, FVoidSignature OnFail)
+	FMovementRequest(int requestId, FActionSignature OnSuccess, FActionSignature OnFail)
 	{
 		this->requestId = requestId;
 		this->OnSuccess = OnSuccess;
@@ -36,35 +35,37 @@ public:
 	}
 };
 
-struct FTimerWithCallback
+struct FExtendedTimer
 {
 private:
-	FVoidSignature OnSuccess;
-	FVoidSignature OnFail;
+	FActionSignature OnSuccess;
+	FActionSignature OnFail;
 
 	FTimerHandle TimerHandle;
-	FTimerManager TimerManager;
+	FTimerManager* TimerManager;
 
 public:
-	FTimerWithCallback()
+	FExtendedTimer()
 	{
 
 	}
 
-	FTimerWithCallback(float Time, FVoidSignature OnSuccess, FVoidSignature OnFail)
+	FExtendedTimer(FTimerManager* Manager, float Time, FActionSignature OnSuccessCallback, FActionSignature OnFailCallback)
 	{
-		this->OnSuccess = OnSuccess;
-		this->OnFail = OnFail;
+		this->TimerManager = Manager;
 
-		this->TimerManager.SetTimer(this->TimerHandle, [&]() {
-			OnSuccess.ExecuteIfBound();
+		this->OnSuccess = OnSuccessCallback;
+		this->OnFail = OnFailCallback;
+
+		this->TimerManager->SetTimer(this->TimerHandle, [&]() {
+			this->OnSuccess.ExecuteIfBound();
 			// TODO delete this?
 			}, Time, false);
 	}
 
 	void Stop()
 	{
-		this->TimerManager.ClearTimer(this->TimerHandle);
+		this->TimerManager->ClearTimer(this->TimerHandle);
 		this->OnFail.ExecuteIfBound();
 	}
 };
@@ -79,6 +80,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Worker")
 	FTargetChangedSignature OnTargetChanged;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	EResourceType CarriedResource = EResourceType::None;
+
 private:
 	UUnitComponent* UnitComponent = nullptr;
 
@@ -87,8 +91,7 @@ private:
 	TMap<uint32, FMovementRequest> MovementRequest;
 
 	uint32 CarriedResourceAmount = 0;
-	EResourceType CarriedResource = EResourceType::None;
-	FTimerWithCallback* GatherTimer;
+	FExtendedTimer* GatherTimer;
 	AActor* TargetResourceRef = nullptr;
 
 public:
@@ -114,10 +117,10 @@ public:
 	void SetAttackTarget(AActor* AttackTarget);
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Movement")
-	void MoveToPosition(FVector Position, FVoidSignature OnSuccess, FVoidSignature OnFail);
+	void MoveToPosition(FVector Position, FActionSignature OnSuccess, FActionSignature OnFail);
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Movement")
-	void MoveToActor(AActor* ActorRef, FVoidSignature OnSuccess, FVoidSignature OnFail);
+	void MoveToActor(AActor* ActorRef, FActionSignature OnSuccess, FActionSignature OnFail);
 
 	void OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result);
 
@@ -130,7 +133,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Worker|Gathering")
 	void SetTargetResource(AActor* Resource);
 
-	void ExtractResource(AActor* ResourceRef, FVoidSignature OnSuccess, FVoidSignature OnFail);
+	void ExtractResource(AActor* ResourceRef, FActionSignature OnSuccess, FActionSignature OnFail);
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Commands")
 	void ExecuteCommand(UUnitCommand* Command);

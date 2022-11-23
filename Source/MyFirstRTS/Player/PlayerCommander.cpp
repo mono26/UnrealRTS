@@ -7,7 +7,7 @@
 #include "../Game/MyFirstRTSGameMode.h"
 #include "../Unit/Command/GatherCommand.h"
 
-void APlayerCommander::ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)
+void APlayerCommander::ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail)
 {
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
 	if (asWorker == nullptr) {
@@ -15,7 +15,7 @@ void APlayerCommander::ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FOn
 	}
 }
 
-void APlayerCommander::ExecuteGatherCommand(AActor* Resource, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)
+void APlayerCommander::ExecuteGatherCommand(AActor* Resource, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail)
 {
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
 	if (asWorker == nullptr) {
@@ -30,7 +30,7 @@ void APlayerCommander::ExecuteGatherCommand(AActor* Resource, AActor* UnitRef, F
 	asWorker->ExecuteCommand(gatherCommand);
 }
 
-void APlayerCommander::ExecuteMovementCommand(FVector TargetPosition, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)
+void APlayerCommander::ExecuteMovementCommand(FVector TargetPosition, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail)
 {
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
 	if (asWorker == nullptr) {
@@ -52,21 +52,17 @@ void APlayerCommander::ExecuteStopCommand(AActor* UnitRef)
 		return;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteStopCommand"));
-
 	UStopCommand* stopCommand = NewObject<UStopCommand>();
 	stopCommand->SetUnit(UnitRef);
 	asWorker->ExecuteCommand(stopCommand);
 }
 
-void APlayerCommander::ExecuteStoreCommand(AActor* Storage, AActor* UnitRef, FOnCommandUpdateSignature OnSuccess, FOnCommandUpdateSignature OnFail)
+void APlayerCommander::ExecuteStoreCommand(AActor* Storage, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail)
 {
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
 	if (asWorker == nullptr) {
 		return;
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteStoreCommand"));
 }
 
 AActor* APlayerCommander::GetPlayerTownhall()

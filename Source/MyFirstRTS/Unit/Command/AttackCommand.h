@@ -17,8 +17,8 @@ class MYFIRSTRTS_API UAttackCommand : public UUnitCommand
 protected:
 	AActor* AttackTargetRef;
 
-	FOnCommandUpdateSignature OnReachAttackTargetDelegate;
-	FOnCommandUpdateSignature OnReachAttackTargetFailDelegate;
+	FActionSignature OnReachAttackTargetDelegate;
+	FActionSignature OnReachAttackTargetFailDelegate;
 
 public:
 	UAttackCommand();

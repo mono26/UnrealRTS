@@ -17,8 +17,7 @@ class MYFIRSTRTS_API UGatherCommand : public UUnitCommand
 protected:
 	AActor* ResourceRef;
 
-	FOnCommandUpdateSignature OnReachResourceDelegate;
-	FOnCommandUpdateSignature OnReachResourceFailDelegate;
+	FActionSignature OnReachResourceDelegate;
 
 public:
 	UGatherCommand();
@@ -31,6 +30,4 @@ public:
 
 	UFUNCTION()
 	void OnReachResource();
-	UFUNCTION()
-	void OnReachResourceFail();
 };

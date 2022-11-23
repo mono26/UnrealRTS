@@ -13,7 +13,7 @@ enum class EResourceType : uint8
 	Gold,
 };
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(BlueprintType, Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MYFIRSTRTS_API UResourceComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -21,6 +21,12 @@ class MYFIRSTRTS_API UResourceComponent : public UActorComponent
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	EResourceType ResourceType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int MineCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	int AmountToGive;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
+	float TimeToGatherInSeconds;
 
 public:	
 	// Sets default values for this component's properties

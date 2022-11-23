@@ -4,10 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "Delegates/Delegate.h"
 #include "UnitCommand.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE(FOnCommandUpdateSignature);
+DECLARE_DYNAMIC_DELEGATE(FActionSignature);
 
 /**
  * 
@@ -20,8 +19,8 @@ class MYFIRSTRTS_API UUnitCommand : public UObject
 protected:
 	AActor* UnitRef;
 	// TODO use events instead.
-	FOnCommandUpdateSignature OnSuccess;
-	FOnCommandUpdateSignature OnFail;
+	FActionSignature OnSuccess;
+	FActionSignature OnFail;
 
 public:
 	UUnitCommand();
@@ -31,6 +30,6 @@ public:
 
 public: 
 	void SetUnit(AActor* Unit);
-	void SetOnCommandSuccess(FOnCommandUpdateSignature Callback);
-	void SetOnCommandFail(FOnCommandUpdateSignature Callback);
+	void SetOnCommandSuccess(FActionSignature Callback);
+	void SetOnCommandFail(FActionSignature Callback);
 };

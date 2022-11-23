@@ -10,7 +10,6 @@ UGatherCommand::UGatherCommand()
 	this->ResourceRef = nullptr;
 
 	this->OnReachResourceDelegate.BindUFunction(this, FName("OnReachResource"));
-	this->OnReachResourceFailDelegate.BindUFunction(this, FName("OnReachResourceFail"));
 }
 
 void UGatherCommand::Execute()
@@ -41,7 +40,7 @@ void UGatherCommand::Execute()
 	movementCommmand->SetUnit(this->UnitRef);
 	movementCommmand->SetTargetPosition(asWorker->GetResource()->GetActorLocation());
 	movementCommmand->SetOnCommandSuccess(this->OnReachResourceDelegate);
-	movementCommmand->SetOnCommandFail(this->OnReachResourceFailDelegate);
+	movementCommmand->SetOnCommandFail(this->OnFail);
 	asWorker->ExecuteCommand(movementCommmand);
 }
 
@@ -55,11 +54,13 @@ void UGatherCommand::OnReachResource()
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnReachResource"));
 
 	// TODO extract resource
-}
+	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
+	if (asWorker == nullptr) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Not a worker."));
 
-void UGatherCommand::OnReachResourceFail()
-{
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnReachResourceFail"));
+		this->OnFail.ExecuteIfBound();
+		return;
+	}
 
-	this->OnFail.ExecuteIfBound();
+	asWorker->ExtractResource(this->ResourceRef, this->OnSuccess, this->OnFail);
 }

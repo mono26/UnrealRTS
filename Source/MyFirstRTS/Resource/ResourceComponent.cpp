@@ -37,3 +37,9 @@ bool UResourceComponent::CanGather()
 	return false;
 }
 
+EResourceType UResourceComponent::GetGatheredResource(int& ResourceAmount)
+{
+	ResourceAmount = this->AmountToGive;
+	return this->ResourceType;
+}
+
