@@ -12,26 +12,40 @@
 #include "../Unit/Command/UnitCommand.h"
 #include "WorkerUnit.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTargetChangedSignature, const AActor*, OldTarget, const AActor*, NewTarget);
-
 struct FMovementRequest
 {
-public:
-	uint32 requestId;
+private:
+	uint32 RequestId;
 
 	FActionSignature OnSuccess;
 	FActionSignature OnFail;
 
-	FMovementRequest()
+public:
+	FMovementRequest() : FMovementRequest(0, FActionSignature(), FActionSignature())
 	{
 
 	}
 
 	FMovementRequest(int requestId, FActionSignature OnSuccess, FActionSignature OnFail)
 	{
-		this->requestId = requestId;
+		this->RequestId = requestId;
 		this->OnSuccess = OnSuccess;
 		this->OnFail = OnFail;
+	}
+
+	uint32 GetResquestId()
+	{
+		return this->RequestId;
+	}
+
+	FActionSignature GetOnSuccess()
+	{
+		return this->OnSuccess;
+	}
+
+	FActionSignature GetOnFail()
+	{
+		return this->OnFail;
 	}
 };
 
@@ -45,20 +59,24 @@ private:
 	FTimerManager* TimerManager;
 
 public:
-	FExtendedTimer()
+	FExtendedTimer() : FExtendedTimer(nullptr, 0.0f, FActionSignature(), FActionSignature())
 	{
 
 	}
 
 	FExtendedTimer(FTimerManager* Manager, float Time, FActionSignature OnSuccessCallback, FActionSignature OnFailCallback)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Create timer."));
+
 		this->TimerManager = Manager;
 
 		this->OnSuccess = OnSuccessCallback;
 		this->OnFail = OnFailCallback;
 
 		this->TimerManager->SetTimer(this->TimerHandle, [&]() {
-			this->OnSuccess.ExecuteIfBound();
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Timer completd."));
+
+			this->OnSuccess.Execute();
 			// TODO delete this?
 			}, Time, false);
 	}
@@ -70,6 +88,46 @@ public:
 	}
 };
 
+struct FGatherRequest
+{
+private:
+	AActor* ResourceRef;
+
+	FActionSignature OnSuccess;
+	FActionSignature OnFail;
+
+public:
+	FGatherRequest()
+	{
+
+	}
+
+	FGatherRequest(AActor* Resource, FActionSignature OnSuccessCallback, FActionSignature OnFailCallback)
+	{
+		this->ResourceRef = Resource;
+
+		this->OnSuccess = OnSuccessCallback;
+		this->OnFail = OnFailCallback;
+	}
+
+	AActor* GetResourceRef()
+	{
+		return this->ResourceRef;
+	}
+
+	FActionSignature GetOnSuccess()
+	{
+		return this->OnSuccess;
+	}
+
+	FActionSignature GetOnFail()
+	{
+		return this->OnFail;
+	}
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTargetChangedSignature, const AActor*, OldTarget, const AActor*, NewTarget);
+
 UCLASS()
 class MYFIRSTRTS_API AWorkerUnit : public ACharacter
 {
@@ -78,10 +136,11 @@ class MYFIRSTRTS_API AWorkerUnit : public ACharacter
 public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Worker")
-	FTargetChangedSignature OnTargetChanged;
+	FTargetChangedSignature OnTargetChangedEvent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
-	EResourceType CarriedResource = EResourceType::None;
+	FActionSignature OnExtractResourceDelegate;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Worker")
+	FResource CarriedResource;
 
 private:
 	UUnitComponent* UnitComponent = nullptr;
@@ -90,9 +149,8 @@ private:
 
 	TMap<uint32, FMovementRequest> MovementRequest;
 
-	uint32 CarriedResourceAmount = 0;
+	FGatherRequest GatherRequest;
 	FExtendedTimer* GatherTimer;
-	AActor* TargetResourceRef = nullptr;
 
 public:
 	// Sets default values for this character's properties
@@ -128,12 +186,16 @@ public:
 	void OnStartMovement();
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Gathering")
-	AActor* GetResource();
+	AActor* GetTargetResource();
 
-	UFUNCTION(BlueprintCallable, Category = "Worker|Gathering")
-	void SetTargetResource(AActor* Resource);
+	void SetGatherRequest(FGatherRequest Request);
 
-	void ExtractResource(AActor* ResourceRef, FActionSignature OnSuccess, FActionSignature OnFail);
+	void ExtractResource(/*AActor* ResourceRef, FActionSignature OnSuccess, FActionSignature OnFail*/);
+
+	UFUNCTION()
+	void OnExtractResource();
+
+	void StoreResource();
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Commands")
 	void ExecuteCommand(UUnitCommand* Command);

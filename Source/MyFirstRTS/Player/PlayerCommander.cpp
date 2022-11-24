@@ -6,6 +6,7 @@
 #include "../Unit/Command/StopCommand.h"
 #include "../Game/MyFirstRTSGameMode.h"
 #include "../Unit/Command/GatherCommand.h"
+#include "../Unit/Command/StoreCommand.h"
 
 void APlayerCommander::ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail)
 {
@@ -63,6 +64,13 @@ void APlayerCommander::ExecuteStoreCommand(AActor* Storage, AActor* UnitRef, FAc
 	if (asWorker == nullptr) {
 		return;
 	}
+
+	UStoreCommand* storeCommand = NewObject<UStoreCommand>();
+	storeCommand->SetUnit(UnitRef);
+	storeCommand->SetStorage(Storage);
+	storeCommand->SetOnCommandSuccess(OnSuccess);
+	storeCommand->SetOnCommandFail(OnFail);
+	asWorker->ExecuteCommand(storeCommand);
 }
 
 AActor* APlayerCommander::GetPlayerTownhall()

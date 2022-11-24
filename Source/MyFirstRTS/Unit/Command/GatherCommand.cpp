@@ -27,8 +27,10 @@ void UGatherCommand::Execute()
 	}
 
 	// TODO don't do it like this always use the resource from the commmand.
-	asWorker->SetTargetResource(this->ResourceRef != nullptr ? this->ResourceRef : asWorker->GetResource());
-	if (asWorker->GetResource() == nullptr) {
+	AActor* targetResource = this->ResourceRef != nullptr ? this->ResourceRef : asWorker->GetTargetResource();
+	FGatherRequest gatherRequest = FGatherRequest(targetResource, this->OnSuccess, this->OnFail);
+	asWorker->SetGatherRequest(gatherRequest);
+	if (asWorker->GetTargetResource() == nullptr) {
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
@@ -38,7 +40,7 @@ void UGatherCommand::Execute()
 	// TODO move to resource
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(this->UnitRef);
-	movementCommmand->SetTargetPosition(asWorker->GetResource()->GetActorLocation());
+	movementCommmand->SetTargetPosition(asWorker->GetTargetResource()->GetActorLocation());
 	movementCommmand->SetOnCommandSuccess(this->OnReachResourceDelegate);
 	movementCommmand->SetOnCommandFail(this->OnFail);
 	asWorker->ExecuteCommand(movementCommmand);
@@ -62,5 +64,5 @@ void UGatherCommand::OnReachResource()
 		return;
 	}
 
-	asWorker->ExtractResource(this->ResourceRef, this->OnSuccess, this->OnFail);
+	asWorker->ExtractResource(/*this->ResourceRef, this->OnSuccess, this->OnFail*/);
 }

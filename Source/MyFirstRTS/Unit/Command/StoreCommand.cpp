@@ -26,12 +26,12 @@ void UStoreCommand::Execute()
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteStoreCommand"));
 
-	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
-	movementCommmand->SetUnit(this->UnitRef);
-	movementCommmand->SetTargetPosition(this->StorageRef->GetActorLocation());
-	movementCommmand->SetOnCommandSuccess(this->OnReachResourceDelegate);
-	movementCommmand->SetOnCommandFail(this->OnFail);
-	asWorker->ExecuteCommand(movementCommmand);
+	//UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
+	//movementCommmand->SetUnit(this->UnitRef);
+	//movementCommmand->SetTargetPosition(this->StorageRef->GetActorLocation());
+	//movementCommmand->SetOnCommandSuccess(this->OnReachStorageDelegate);
+	//movementCommmand->SetOnCommandFail(this->OnFail);
+	//asWorker->ExecuteCommand(movementCommmand);
 }
 
 void UStoreCommand::SetStorage(AActor* Storage)

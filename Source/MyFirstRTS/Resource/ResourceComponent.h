@@ -13,6 +13,30 @@ enum class EResourceType : uint8
 	Gold,
 };
 
+USTRUCT(BlueprintType)
+struct FResource
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Resource")
+	EResourceType ResourceType;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Resource")
+	int ResourceAmount;
+
+public:
+	FResource()
+	{
+
+	}
+
+	FResource(EResourceType Type, int Amount)
+	{
+		this->ResourceType = Type;
+		this->ResourceAmount = Amount;
+	}
+};
+
 UCLASS(BlueprintType, Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MYFIRSTRTS_API UResourceComponent : public UActorComponent
 {
@@ -42,5 +66,5 @@ public:
 
 	bool CanGather();
 
-	EResourceType GetGatheredResource(int& ResourceAmount);
+	FResource GetGatheredResource();
 };

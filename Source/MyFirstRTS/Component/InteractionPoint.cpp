@@ -1,11 +1,10 @@
 // Copyright: For learning purposes, Mono Zubiria.
 
 
-#include "BuildingComponent.h"
-#include "../Component/InteractableComponent.h"
+#include "InteractionPoint.h"
 
 // Sets default values for this component's properties
-UBuildingComponent::UBuildingComponent()
+UInteractionPoint::UInteractionPoint()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -16,18 +15,17 @@ UBuildingComponent::UBuildingComponent()
 
 
 // Called when the game starts
-void UBuildingComponent::BeginPlay()
+void UInteractionPoint::BeginPlay()
 {
 	Super::BeginPlay();
 
 	// ...
-	UInteractableComponent* interactableComponent = this->GetOwner()->FindComponentByClass<UInteractableComponent>();
-	interactableComponent->SetInteractableRadius(this->BuildingSize);
+	
 }
 
 
 // Called every frame
-void UBuildingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UInteractionPoint::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 

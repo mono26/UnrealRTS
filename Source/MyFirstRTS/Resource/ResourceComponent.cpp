@@ -2,6 +2,7 @@
 
 
 #include "ResourceComponent.h"
+#include "../Component/InteractableComponent.h"
 
 // Sets default values for this component's properties
 UResourceComponent::UResourceComponent()
@@ -20,7 +21,8 @@ void UResourceComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	UInteractableComponent* interactableComponent = this->GetOwner()->FindComponentByClass<UInteractableComponent>();
+	//interactableComponent->SetInteractableRadius(this->BuildingSize);
 }
 
 
@@ -34,12 +36,17 @@ void UResourceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 bool UResourceComponent::CanGather()
 {
-	return false;
+	return this->MineCount > 0;
 }
 
-EResourceType UResourceComponent::GetGatheredResource(int& ResourceAmount)
+FResource UResourceComponent::GetGatheredResource()
 {
-	ResourceAmount = this->AmountToGive;
-	return this->ResourceType;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("GetGatheredResource."));
+
+	FResource resource = FResource(this->ResourceType, this->AmountToGive);
+
+	this->MineCount--;
+
+	return resource;
 }
 

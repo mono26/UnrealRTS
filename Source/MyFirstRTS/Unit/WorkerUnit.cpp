@@ -5,7 +5,6 @@
 #include "AIController.h"
 #include "AITypes.h"
 #include "Navigation/PathFollowingComponent.h"
-#include "../Resource/ResourceComponent.h"
 
 // Sets default values
 AWorkerUnit::AWorkerUnit()
@@ -14,6 +13,8 @@ AWorkerUnit::AWorkerUnit()
 	PrimaryActorTick.bCanEverTick = true;
 
 	this->AttackTargetRef = nullptr;
+
+	this->OnExtractResourceDelegate.BindUFunction(this, FName("OnExtractResource"));
 
 	this->GatherTimer = nullptr;
 }
@@ -25,7 +26,7 @@ void AWorkerUnit::BeginPlay()
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, this->GetActorNameOrLabel());
 
-	this->UnitComponent = Cast<UUnitComponent>(this->GetComponentByClass(UUnitComponent::StaticClass()));
+	this->UnitComponent = this->FindComponentByClass<UUnitComponent>();
 
 	AAIController* controller = Cast<AAIController>(this->GetController());
 
@@ -57,8 +58,8 @@ void AWorkerUnit::SetAttackTarget(AActor* AttackTarget)
 	AActor* oldTarget = this->AttackTargetRef;
 	this->AttackTargetRef = AttackTarget;
 
-	if (this->OnTargetChanged.IsBound()) {
-		this->OnTargetChanged.Broadcast(oldTarget, this->AttackTargetRef);
+	if (this->OnTargetChangedEvent.IsBound()) {
+		this->OnTargetChangedEvent.Broadcast(oldTarget, this->AttackTargetRef);
 	}
 }
 
@@ -112,12 +113,12 @@ void AWorkerUnit::OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFoll
 	}
 
 	FMovementRequest* request = MovementRequest.Find(id);
-	if (request->requestId == id) {
+	if (request->GetResquestId() == id) {
 		if (Result.IsSuccess()) {
-			request->OnSuccess.ExecuteIfBound();
+			request->GetOnSuccess().ExecuteIfBound();
 		}
 		else {
-			request->OnFail.ExecuteIfBound();
+			request->GetOnFail().ExecuteIfBound();
 		}
 	}
 
@@ -126,36 +127,72 @@ void AWorkerUnit::OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFoll
 	// delete request;
 }
 
-AActor* AWorkerUnit::GetResource()
+AActor* AWorkerUnit::GetTargetResource()
 {
-	return this->TargetResourceRef;
+	return this->GatherRequest.GetResourceRef();
 }
 
-void AWorkerUnit::SetTargetResource(AActor* TargetResource)
+void AWorkerUnit::SetGatherRequest(FGatherRequest Request)
 {
-	this->TargetResourceRef = TargetResource;
+	this->GatherRequest = Request;
 }
 
-void AWorkerUnit::ExtractResource(AActor* ResourceRef, FActionSignature OnSuccess, FActionSignature OnFail)
+void AWorkerUnit::ExtractResource(/*AActor* ResourceRef, FActionSignature OnSuccess, FActionSignature OnFail*/)
 {
-	if (ResourceRef == nullptr) {
+	//if (ResourceRef == nullptr) {
+	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No resource actor."));
+
+	//	OnFail.ExecuteIfBound();
+	//	return;
+	//}
+
+	if (this->GatherRequest.GetResourceRef() == nullptr) {
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No resource actor."));
 
-		OnFail.ExecuteIfBound();
+		this->GatherRequest.GetOnFail().ExecuteIfBound();
 		return;
 	}
 
-	UResourceComponent* resourceComponent = Cast<UResourceComponent>(ResourceRef->GetComponentByClass(UResourceComponent::StaticClass()));
+	// TODO check if already have resources in the hand.
+
+	//UResourceComponent* resourceComponent = Cast<UResourceComponent>(ResourceRef->GetComponentByClass(UResourceComponent::StaticClass()));
+	//if (resourceComponent == nullptr) {
+	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No resource component."));
+
+	//	OnFail.ExecuteIfBound();
+	//	return;
+	//}
+
+	UResourceComponent* resourceComponent = this->GatherRequest.GetResourceRef()->FindComponentByClass<UResourceComponent>();
 	if (resourceComponent == nullptr) {
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No resource component."));
 
-		OnFail.ExecuteIfBound();
+		this->GatherRequest.GetOnFail().ExecuteIfBound();
 		return;
 	}
 
-	this->GatherTimer = new FExtendedTimer(&GetWorld()->GetTimerManager(), 3.0f, OnSuccess, OnFail);
+	//this->GatherTimer = FExtendedTimer(&GetWorld()->GetTimerManager(), 3.0f, this->OnExtractResourceDelegate, OnFail);
+
+	this->GatherTimer = new FExtendedTimer(&GetWorld()->GetTimerManager(), 3.0f, this->OnExtractResourceDelegate, this->GatherRequest.GetOnFail());
 
 	this->UnitComponent->SetCurrentState(EUnitStates::Gathering);
+}
+
+void AWorkerUnit::OnExtractResource()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnExtractResource."));
+
+	UResourceComponent* resourceComponent = this->GatherRequest.GetResourceRef()->FindComponentByClass<UResourceComponent>();
+	if (resourceComponent == nullptr) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No resource component."));
+
+		this->GatherRequest.GetOnFail().ExecuteIfBound();
+		return;
+	}
+
+	this->CarriedResource = resourceComponent->GetGatheredResource();
+
+	this->GatherRequest.GetOnSuccess().ExecuteIfBound();
 }
 
 void AWorkerUnit::ExecuteCommand(UUnitCommand* Command)

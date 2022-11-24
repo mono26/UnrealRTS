@@ -30,7 +30,7 @@ void UWorkerUnitBrain::BeginPlay()
 
 	// ...
 	AActor* owner = this->GetOwner();
-	this->PerceptionComponent = Cast<UAIPerceptionComponent>(owner->GetComponentByClass(UAIPerceptionComponent::StaticClass()));
+	this->PerceptionComponent = owner->FindComponentByClass<UAIPerceptionComponent>();
 }
 
 
@@ -95,7 +95,7 @@ void UWorkerUnitBrain::OnSightUpdated(AActor* Instigator)
 	AAIController* ownerController = Cast<AAIController>(this->GetOwner());
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(ownerController->GetPawn());
 
-	UUnitComponent* unitComponent = Cast<UUnitComponent>(ownerController->GetPawn()->GetComponentByClass(UUnitComponent::StaticClass()));
+	UUnitComponent* unitComponent = ownerController->GetPawn()->FindComponentByClass<UUnitComponent>();
 
 	if (asWorker == nullptr || unitComponent == nullptr) {
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Actor is not a valid worker."));
@@ -144,12 +144,12 @@ AActor* UWorkerUnitBrain::GetPlayerTownhall()
 
 bool UWorkerUnitBrain::IsFromTheSameTeam(AActor* OtherRef)
 {
-	UTeamComponent* teamComponent = Cast<UTeamComponent>(this->GetOwner()->GetComponentByClass(UTeamComponent::StaticClass()));
+	UTeamComponent* teamComponent = this->GetOwner()->FindComponentByClass<UTeamComponent>();
 	if (OtherRef == nullptr || teamComponent == nullptr) {
 		return false;
 	}
 
-	UTeamComponent* otherTeamComponent = Cast<UTeamComponent>(OtherRef->GetComponentByClass(UTeamComponent::StaticClass()));
+	UTeamComponent* otherTeamComponent = OtherRef->FindComponentByClass<UTeamComponent>();
 	if (otherTeamComponent != nullptr) {
 		return teamComponent->TeamAttitude.GetValue() == otherTeamComponent->TeamAttitude.GetValue();
 	}
