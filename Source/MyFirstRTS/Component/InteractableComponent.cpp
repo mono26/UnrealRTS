@@ -49,11 +49,11 @@ USceneComponent* UInteractableComponent::GetClosestInteractionPointTo(AActor* Ac
 	UInteractionPoint* closestPoint = nullptr;
 	for (UInteractionPoint* point : points) {
 		if (closestPoint == nullptr) {
-			closestSqrDistance = FVector::DistSquared(Actor->GetActorLocation(), point->GetOwner()->GetActorLocation());
+			closestSqrDistance = FVector::DistSquared(Actor->GetActorLocation(), point->GetComponentLocation());
 			closestPoint = point;
 		}
 
-		float sqrDistance = FVector::DistSquared(Actor->GetActorLocation(), point->GetOwner()->GetActorLocation());
+		float sqrDistance = FVector::DistSquared(Actor->GetActorLocation(), point->GetComponentLocation());
 		if (sqrDistance < closestSqrDistance) {
 			closestSqrDistance = sqrDistance;
 			closestPoint = point;

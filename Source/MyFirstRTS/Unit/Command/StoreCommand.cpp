@@ -4,6 +4,7 @@
 #include "StoreCommand.h"
 #include "../WorkerUnit.h"
 #include "MovementCommand.h"
+#include "../../Component/InteractableComponent.h"
 
 UStoreCommand::UStoreCommand()
 {
@@ -23,15 +24,26 @@ void UStoreCommand::Execute()
 		return;
 	}
 
+	UInteractableComponent* interactableComponent = this->StorageRef->FindComponentByClass<UInteractableComponent>();
+	if (interactableComponent == nullptr) {
+		this->OnFail.ExecuteIfBound();
+		return;
+	}
+
+	USceneComponent* point = interactableComponent->GetClosestInteractionPointTo(this->UnitRef);
+	if (point == nullptr) {
+		this->OnFail.ExecuteIfBound();
+		return;
+	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteStoreCommand"));
 
-	//UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
-	//movementCommmand->SetUnit(this->UnitRef);
-	//movementCommmand->SetTargetPosition(this->StorageRef->GetActorLocation());
-	//movementCommmand->SetOnCommandSuccess(this->OnReachStorageDelegate);
-	//movementCommmand->SetOnCommandFail(this->OnFail);
-	//asWorker->ExecuteCommand(movementCommmand);
+	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
+	movementCommmand->SetUnit(this->UnitRef);
+	movementCommmand->SetTargetPosition(point->GetComponentLocation());
+	movementCommmand->SetOnCommandSuccess(this->OnReachStorageDelegate);
+	movementCommmand->SetOnCommandFail(this->OnFail);
+	asWorker->ExecuteCommand(movementCommmand);
 }
 
 void UStoreCommand::SetStorage(AActor* Storage)
@@ -53,4 +65,5 @@ void UStoreCommand::OnReachStorage()
 	}
 
 	// TODO store resource.
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Store resource."));
 }
