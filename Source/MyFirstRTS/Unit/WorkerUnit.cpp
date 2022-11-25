@@ -19,6 +19,8 @@ AWorkerUnit::AWorkerUnit()
 	this->OnExtractResourceDelegate.BindUFunction(this, FName("OnExtractResource"));
 
 	this->GatherTimer = nullptr;
+
+	this->CarriedResource = FResource();
 }
 
 // Called when the game starts or when spawned
@@ -188,6 +190,8 @@ void AWorkerUnit::StoreResource()
 {
 	APlayerCommander* commander = Cast<APlayerCommander>(UGameplayStatics::GetPlayerController(this, 0));
 	commander->ReceiveResources(this->CarriedResource.ResourceType, this->CarriedResource.ResourceAmount);
+	// TODO delete old resource? Or maybe just create a pointer and set the inner values.
+	this->CarriedResource = FResource();
 }
 
 void AWorkerUnit::ExecuteCommand(UUnitCommand* Command)

@@ -41,8 +41,6 @@ bool UResourceComponent::CanGather()
 
 FResource UResourceComponent::GetGatheredResource()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("GetGatheredResource."));
-
 	FResource resource = FResource(this->ResourceType, this->AmountToGive);
 
 	this->MineCount--;

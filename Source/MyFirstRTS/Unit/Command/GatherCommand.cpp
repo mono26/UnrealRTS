@@ -55,11 +55,9 @@ void UGatherCommand::OnReachResource()
 {
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
 	if (asWorker == nullptr) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Not a worker."));
-
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
 
-	asWorker->ExtractResource(/*this->ResourceRef, this->OnSuccess, this->OnFail*/);
+	asWorker->ExtractResource();
 }

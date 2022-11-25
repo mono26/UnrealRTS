@@ -25,7 +25,7 @@ public:
 	int ResourceAmount;
 
 public:
-	FResource()
+	FResource() : FResource(EResourceType::None, 0)
 	{
 
 	}
