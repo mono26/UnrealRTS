@@ -53,9 +53,6 @@ void UGatherCommand::SetResource(AActor* Resource)
 
 void UGatherCommand::OnReachResource()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnReachResource"));
-
-	// TODO extract resource
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
 	if (asWorker == nullptr) {
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Not a worker."));

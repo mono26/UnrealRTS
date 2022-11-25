@@ -5,10 +5,13 @@
 #include "../WorkerUnit.h"
 #include "MovementCommand.h"
 #include "../../Component/InteractableComponent.h"
+#include "DrawDebugHelpers.h"
 
 UStoreCommand::UStoreCommand()
 {
 	this->StorageRef = nullptr;
+
+	this->OnReachStorageDelegate.BindUFunction(this, FName("OnReachStorage"));
 }
 
 void UStoreCommand::Execute()
@@ -36,6 +39,8 @@ void UStoreCommand::Execute()
 		return;
 	}
 
+	DrawDebugSphere(point->GetWorld(), point->GetComponentLocation(), 100, 12, FColor::Magenta, false, 3.0);
+
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteStoreCommand"));
 
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
@@ -53,8 +58,6 @@ void UStoreCommand::SetStorage(AActor* Storage)
 
 void UStoreCommand::OnReachStorage()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnReachStorage"));
-
 	// TODO extract resource
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
 	if (asWorker == nullptr) {
@@ -64,6 +67,7 @@ void UStoreCommand::OnReachStorage()
 		return;
 	}
 
-	// TODO store resource.
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Store resource."));
+	asWorker->StoreResource();
+
+	this->OnSuccess.Execute();
 }

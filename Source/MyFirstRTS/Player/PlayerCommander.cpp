@@ -84,3 +84,15 @@ AActor* APlayerCommander::GetPlayerTownhall()
 
 	return rtsMode->GetPlayerTownhall();
 }
+
+void APlayerCommander::ReceiveResources(EResourceType ResourceType, int ResourceAmount)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ReceiveResources"));
+
+	if (this->StoredResources.Contains(ResourceType)) {
+		this->StoredResources[ResourceType] += ResourceAmount;
+	}
+	else {
+		this->StoredResources.Add(ResourceType, ResourceAmount);
+	}
+}

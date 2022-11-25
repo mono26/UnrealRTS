@@ -5,6 +5,8 @@
 #include "AIController.h"
 #include "AITypes.h"
 #include "Navigation/PathFollowingComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "../Player/PlayerCommander.h"
 
 // Sets default values
 AWorkerUnit::AWorkerUnit()
@@ -195,6 +197,12 @@ void AWorkerUnit::OnExtractResource()
 	this->GatherRequest.GetOnSuccess().ExecuteIfBound();
 }
 
+void AWorkerUnit::StoreResource()
+{
+	APlayerCommander* commander = Cast<APlayerCommander>(UGameplayStatics::GetPlayerController(this, 0));
+	commander->ReceiveResources(this->CarriedResource.ResourceType, this->CarriedResource.ResourceAmount);
+}
+
 void AWorkerUnit::ExecuteCommand(UUnitCommand* Command)
 {
 	Command->Execute();
@@ -214,7 +222,9 @@ void AWorkerUnit::StopAllActions()
 	controller->StopMovement();
 
 	if (this->GatherTimer != nullptr) {
-		this->GatherTimer->Stop();
+		FExtendedTimer* timer = this->GatherTimer;
+		this->GatherTimer = nullptr;
+		timer->Stop();
 	}
 
 	this->UnitComponent->SetCurrentState(EUnitStates::Idle);

@@ -66,16 +66,12 @@ public:
 
 	FExtendedTimer(FTimerManager* Manager, float Time, FActionSignature OnSuccessCallback, FActionSignature OnFailCallback)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Create timer."));
-
 		this->TimerManager = Manager;
 
 		this->OnSuccess = OnSuccessCallback;
 		this->OnFail = OnFailCallback;
 
 		this->TimerManager->SetTimer(this->TimerHandle, [&]() {
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Timer completd."));
-
 			this->OnSuccess.Execute();
 			// TODO delete this?
 			}, Time, false);
