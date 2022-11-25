@@ -139,41 +139,28 @@ void AWorkerUnit::SetGatherRequest(FGatherRequest Request)
 	this->GatherRequest = Request;
 }
 
-void AWorkerUnit::ExtractResource(/*AActor* ResourceRef, FActionSignature OnSuccess, FActionSignature OnFail*/)
+void AWorkerUnit::ExtractResource()
 {
-	//if (ResourceRef == nullptr) {
-	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No resource actor."));
-
-	//	OnFail.ExecuteIfBound();
-	//	return;
-	//}
-
 	if (this->GatherRequest.GetResourceRef() == nullptr) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No resource actor."));
-
 		this->GatherRequest.GetOnFail().ExecuteIfBound();
 		return;
 	}
-
-	// TODO check if already have resources in the hand.
-
-	//UResourceComponent* resourceComponent = Cast<UResourceComponent>(ResourceRef->GetComponentByClass(UResourceComponent::StaticClass()));
-	//if (resourceComponent == nullptr) {
-	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No resource component."));
-
-	//	OnFail.ExecuteIfBound();
-	//	return;
-	//}
 
 	UResourceComponent* resourceComponent = this->GatherRequest.GetResourceRef()->FindComponentByClass<UResourceComponent>();
 	if (resourceComponent == nullptr) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No resource component."));
-
 		this->GatherRequest.GetOnFail().ExecuteIfBound();
 		return;
 	}
 
-	//this->GatherTimer = FExtendedTimer(&GetWorld()->GetTimerManager(), 3.0f, this->OnExtractResourceDelegate, OnFail);
+	if (this->CarriedResource.ResourceType == resourceComponent->ResourceType) {
+		this->GatherRequest.GetOnSuccess().ExecuteIfBound();
+		return;
+	}
+
+	if (!resourceComponent->CanGather()) {
+		this->GatherRequest.GetOnFail().ExecuteIfBound();
+		return;
+	}
 
 	this->GatherTimer = new FExtendedTimer(&GetWorld()->GetTimerManager(), 3.0f, this->OnExtractResourceDelegate, this->GatherRequest.GetOnFail());
 
