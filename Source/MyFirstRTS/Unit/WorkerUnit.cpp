@@ -59,6 +59,8 @@ AActor* AWorkerUnit::GetAttackTarget()
 
 void AWorkerUnit::SetAttackTarget(AActor* AttackTarget)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("SetAttackTarget"));
+
 	AActor* oldTarget = this->AttackTargetRef;
 	this->AttackTargetRef = AttackTarget;
 
@@ -112,7 +114,6 @@ void AWorkerUnit::OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFoll
 {
 	uint32 id = RequestID.GetID();
 	if (!MovementRequest.Contains(id)) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No request found."));
 		return;
 	}
 
@@ -171,12 +172,8 @@ void AWorkerUnit::ExtractResource()
 
 void AWorkerUnit::OnExtractResource()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnExtractResource."));
-
 	UResourceComponent* resourceComponent = this->GatherRequest.GetResourceRef()->FindComponentByClass<UResourceComponent>();
 	if (resourceComponent == nullptr) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No resource component."));
-
 		this->GatherRequest.GetOnFail().ExecuteIfBound();
 		return;
 	}

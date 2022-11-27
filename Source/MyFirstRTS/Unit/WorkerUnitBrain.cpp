@@ -98,18 +98,17 @@ void UWorkerUnitBrain::OnSightUpdated(AActor* Instigator)
 	UUnitComponent* unitComponent = ownerController->GetPawn()->FindComponentByClass<UUnitComponent>();
 
 	if (asWorker == nullptr || unitComponent == nullptr) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Actor is not a valid worker."));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Owner is not a valid worker."));
 		return;
 	}
 
 	AActor* currentTarget = asWorker->GetAttackTarget();
-	if (currentTarget == nullptr) {
-		asWorker->SetAttackTarget(Instigator);
-		return;
-	}
+	//if (currentTarget == nullptr) {
+	//	asWorker->SetAttackTarget(Instigator);
+	//	return;
+	//}
 
 	if (currentTarget == Instigator) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Shouldn't target the same target twice."));
 		return;
 	}
 
@@ -144,9 +143,14 @@ AActor* UWorkerUnitBrain::GetPlayerTownhall()
 
 bool UWorkerUnitBrain::IsFromTheSameTeam(AActor* OtherRef)
 {
+	if (OtherRef == nullptr) {
+		return true;
+	}
+
 	UTeamComponent* teamComponent = this->GetOwner()->FindComponentByClass<UTeamComponent>();
-	if (OtherRef == nullptr || teamComponent == nullptr) {
-		return false;
+	if (teamComponent == nullptr) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("I don't have a team component."));
+		return true;
 	}
 
 	UTeamComponent* otherTeamComponent = OtherRef->FindComponentByClass<UTeamComponent>();
@@ -154,7 +158,9 @@ bool UWorkerUnitBrain::IsFromTheSameTeam(AActor* OtherRef)
 		return teamComponent->TeamAttitude.GetValue() == otherTeamComponent->TeamAttitude.GetValue();
 	}
 
-	return false;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Other doesn't have a team component."));
+
+	return true;
 }
 
 AActor* UWorkerUnitBrain::SelectClosestActor(AActor* ActorARef, AActor* ActorBRef)
