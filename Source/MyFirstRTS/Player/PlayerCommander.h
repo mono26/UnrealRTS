@@ -16,7 +16,8 @@ class MYFIRSTRTS_API APlayerCommander : public APlayerController
 {
 	GENERATED_BODY()
 	
-private:
+public:
+	UPROPERTY(BlueprintReadOnly, Category = "Resources")
 	TMap<EResourceType, int> StoredResources;
 
 public:
@@ -39,4 +40,7 @@ public:
 	AActor* GetPlayerTownhall();
 
 	void ReceiveResources(EResourceType ResourceType, int ResourceAmount);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "PlayerCommander|Resources")
+	void OnReceiveResources(EResourceType ResourceType);
 };

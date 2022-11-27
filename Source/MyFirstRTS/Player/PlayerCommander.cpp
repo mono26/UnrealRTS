@@ -95,4 +95,6 @@ void APlayerCommander::ReceiveResources(EResourceType ResourceType, int Resource
 	else {
 		this->StoredResources.Add(ResourceType, ResourceAmount);
 	}
+
+	this->OnReceiveResources(ResourceType);
 }
