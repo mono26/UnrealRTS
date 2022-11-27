@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "../Unit/Command/UnitCommand.h"
 #include "ResourceComponent.generated.h"
 
 UENUM(BlueprintType)
@@ -37,12 +38,20 @@ public:
 	}
 };
 
+// TODO make this an event.
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMulticastActionSignature);
+
 UCLASS(BlueprintType, Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MYFIRSTRTS_API UResourceComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintAssignable, Category = "Resource")
+	FMulticastActionSignature OnResourceGatheredEvent;
+	UPROPERTY(BlueprintAssignable, Category = "Resource")
+	FMulticastActionSignature OnResourceDepletedEvent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")
 	EResourceType ResourceType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resource")

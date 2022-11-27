@@ -41,9 +41,17 @@ bool UResourceComponent::CanGather()
 
 FResource UResourceComponent::GetGatheredResource()
 {
+	this->MineCount--;
+
 	FResource resource = FResource(this->ResourceType, this->AmountToGive);
 
-	this->MineCount--;
+	if (this->OnResourceGatheredEvent.IsBound()) {
+		this->OnResourceGatheredEvent.Broadcast();
+	}
+
+	if (!this->CanGather() && this->OnResourceDepletedEvent.IsBound()) {
+		this->OnResourceDepletedEvent.Broadcast();
+	}
 
 	return resource;
 }
