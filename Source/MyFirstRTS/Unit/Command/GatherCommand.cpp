@@ -35,7 +35,7 @@ void UGatherCommand::Execute()
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("ExecuteGatherCommand"));
+	// UE_LOG(LogTemp, Warning, TEXT("ExecuteGatherCommand"));
 
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(this->UnitRef);

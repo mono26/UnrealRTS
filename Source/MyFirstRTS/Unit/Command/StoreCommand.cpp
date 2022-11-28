@@ -39,9 +39,7 @@ void UStoreCommand::Execute()
 		return;
 	}
 
-	// DrawDebugSphere(point->GetWorld(), point->GetComponentLocation(), 100, 12, FColor::Magenta, false, 3.0);
-
-	UE_LOG(LogTemp, Warning, TEXT("ExecuteStoreCommand"));
+	// UE_LOG(LogTemp, Warning, TEXT("ExecuteStoreCommand"));
 
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(this->UnitRef);

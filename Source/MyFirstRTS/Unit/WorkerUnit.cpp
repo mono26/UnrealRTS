@@ -83,8 +83,8 @@ void AWorkerUnit::MoveToPosition(FVector Position, FActionSignature OnSuccess, F
 	UPathFollowingComponent* pathComponent = controller->GetPathFollowingComponent();
 
 	EPathFollowingRequestResult::Type requestResult = controller->MoveToLocation(
-		Position,
-		50.0f /*TODO use interactable size.*/,
+		Position + FVector(0, 0, 0.1f),
+		60.0f /*TODO use interactable size.*/,
 		false
 	);
 
@@ -123,7 +123,10 @@ void AWorkerUnit::OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFoll
 			request->GetOnSuccess().ExecuteIfBound();
 		}
 		else {
-			request->GetOnFail().ExecuteIfBound();
+			// Don't trigger callback if the path is aborted by a new path request.
+			if (!Result.IsInterrupted()) {
+				request->GetOnFail().ExecuteIfBound();
+			}
 		}
 	}
 
@@ -156,8 +159,7 @@ void AWorkerUnit::ExtractResource()
 	}
 
 	if (this->CarriedResource.ResourceType == resourceComponent->ResourceType) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Already have this resource."));
-
+		UE_LOG(LogTemp, Warning, TEXT("Already have this resource."));
 		this->GatherRequest.GetOnSuccess().ExecuteIfBound();
 		return;
 	}
@@ -201,13 +203,13 @@ void AWorkerUnit::ExecuteCommand(UUnitCommand* Command)
 {
 	this->bIsRunningCommand = true;
 
-	if (this->GatherTimer != nullptr) {
-		FExtendedTimer* timer = this->GatherTimer;
-		this->GatherTimer = nullptr;
-		timer->Stop();
-	}
+	//if (this->GatherTimer != nullptr) {
+	//	FExtendedTimer* timer = this->GatherTimer;
+	//	this->GatherTimer = nullptr;
+	//	timer->Stop();
+	//}
 
-	this->SetAttackTarget(nullptr);
+	//this->SetAttackTarget(nullptr);
 
 	Command->Execute();
 }
@@ -236,7 +238,7 @@ void AWorkerUnit::StopAllActions()
 		timer->Stop();
 	}
 
-	this->SetAttackTarget(nullptr);
+	// this->SetAttackTarget(nullptr);
 	this->UnitComponent->SetCurrentState(EUnitStates::Idle);
 
 	this->OnStopAll();

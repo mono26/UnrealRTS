@@ -29,7 +29,7 @@ void UMovementCommand::Execute()
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("ExecuteMovementCommand"));
+	// UE_LOG(LogTemp, Warning, TEXT("ExecuteMovementCommand"));
 
 	asWorker->MoveToPosition(this->TargetPosition, this->OnReachedPositionDelegate, this->OnReachPositionFailDelegate);
 }

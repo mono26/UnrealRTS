@@ -88,17 +88,13 @@ void UWorkerUnitBrain::OnSightUpdated(AActor* Instigator)
 	}
 
 	if (this->IsFromTheSameTeam(Instigator)) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Can't target the same team."));
 		return;
 	}
 
 	AAIController* ownerController = Cast<AAIController>(this->GetOwner());
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(ownerController->GetPawn());
-
-	UUnitComponent* unitComponent = ownerController->GetPawn()->FindComponentByClass<UUnitComponent>();
-
-	if (asWorker == nullptr || unitComponent == nullptr) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Owner is not a valid worker."));
+	if (asWorker == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("Owner is not a valid worker."));
 		return;
 	}
 
@@ -147,9 +143,10 @@ bool UWorkerUnitBrain::IsFromTheSameTeam(AActor* OtherRef)
 		return true;
 	}
 
-	UTeamComponent* teamComponent = this->GetOwner()->FindComponentByClass<UTeamComponent>();
+	AAIController* ownerController = Cast<AAIController>(this->GetOwner());
+	UTeamComponent* teamComponent = ownerController->GetPawn()->FindComponentByClass<UTeamComponent>();
 	if (teamComponent == nullptr) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("I don't have a team component."));
+		UE_LOG(LogTemp, Warning, TEXT("I, %s, don't have a team component."), *ownerController->GetPawn()->GetName());
 		return true;
 	}
 
@@ -157,8 +154,6 @@ bool UWorkerUnitBrain::IsFromTheSameTeam(AActor* OtherRef)
 	if (otherTeamComponent != nullptr) {
 		return teamComponent->TeamAttitude.GetValue() == otherTeamComponent->TeamAttitude.GetValue();
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Other doesn't have a team component."));
 
 	return true;
 }
