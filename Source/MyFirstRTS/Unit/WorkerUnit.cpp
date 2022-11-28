@@ -59,7 +59,7 @@ AActor* AWorkerUnit::GetAttackTarget()
 
 void AWorkerUnit::SetAttackTarget(AActor* AttackTarget)
 {
-	UE_LOG(LogTemp, Warning, TEXT("SetAttackTarget"));
+	UE_LOG(LogTemp, Warning, TEXT("SetAttackTarget %s"), *AttackTarget->GetName());
 
 	AActor* oldTarget = this->AttackTargetRef;
 	this->AttackTargetRef = AttackTarget;
