@@ -21,8 +21,6 @@ void UStopCommand::Execute()
 		return;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteStopCommand"));
-
 	asWorker->StopAllActions();
 
 	this->OnSuccess.ExecuteIfBound();

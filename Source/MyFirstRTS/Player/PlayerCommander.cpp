@@ -85,6 +85,11 @@ AActor* APlayerCommander::GetPlayerTownhall()
 	return rtsMode->GetPlayerTownhall();
 }
 
+TMap<EResourceType, int> APlayerCommander::GetStoredResources()
+{
+	return this->StoredResources;
+}
+
 void APlayerCommander::ReceiveResources(EResourceType ResourceType, int ResourceAmount)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ReceiveResources"));

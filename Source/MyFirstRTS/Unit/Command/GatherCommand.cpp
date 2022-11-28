@@ -35,9 +35,6 @@ void UGatherCommand::Execute()
 		return;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteGatherCommand"));
-
-	// TODO move to resource
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(this->UnitRef);
 	movementCommmand->SetTargetPosition(asWorker->GetTargetResource()->GetActorLocation());

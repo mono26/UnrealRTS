@@ -70,6 +70,7 @@ float UInteractableComponent::GetInteractableRadius()
 	return this->InteractableRadius * scale;
 }
 
+// TODO
 void UInteractableComponent::SetInteractableRadius(float Radius)
 {
 	this->InteractableRadius = Radius;

@@ -156,6 +156,8 @@ void AWorkerUnit::ExtractResource()
 	}
 
 	if (this->CarriedResource.ResourceType == resourceComponent->ResourceType) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Already have this resource."));
+
 		this->GatherRequest.GetOnSuccess().ExecuteIfBound();
 		return;
 	}
