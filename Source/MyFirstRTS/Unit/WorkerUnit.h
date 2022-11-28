@@ -139,6 +139,8 @@ public:
 	FResource CarriedResource;
 
 private:
+	bool bIsRunningCommand = false;
+
 	UUnitComponent* UnitComponent = nullptr;
 
 	AActor* AttackTargetRef = nullptr;
@@ -195,6 +197,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Commands")
 	void ExecuteCommand(UUnitCommand* Command);
+
+	UFUNCTION(BlueprintCallable, Category = "Worker|Commands")
+	bool GetIsRunningCommand();
 
 	UFUNCTION(BlueprintCallable, Category = "Worker")
 	void StopAllActions();

@@ -59,7 +59,7 @@ AActor* AWorkerUnit::GetAttackTarget()
 
 void AWorkerUnit::SetAttackTarget(AActor* AttackTarget)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("SetAttackTarget"));
+	UE_LOG(LogTemp, Warning, TEXT("SetAttackTarget"));
 
 	AActor* oldTarget = this->AttackTargetRef;
 	this->AttackTargetRef = AttackTarget;
@@ -199,7 +199,22 @@ void AWorkerUnit::StoreResource()
 
 void AWorkerUnit::ExecuteCommand(UUnitCommand* Command)
 {
+	this->bIsRunningCommand = true;
+
+	if (this->GatherTimer != nullptr) {
+		FExtendedTimer* timer = this->GatherTimer;
+		this->GatherTimer = nullptr;
+		timer->Stop();
+	}
+
+	this->SetAttackTarget(nullptr);
+
 	Command->Execute();
+}
+
+bool AWorkerUnit::GetIsRunningCommand()
+{
+	return this->bIsRunningCommand;
 }
 
 void AWorkerUnit::StopAllActions()
@@ -221,8 +236,11 @@ void AWorkerUnit::StopAllActions()
 		timer->Stop();
 	}
 
+	this->SetAttackTarget(nullptr);
 	this->UnitComponent->SetCurrentState(EUnitStates::Idle);
 
 	this->OnStopAll();
+
+	this->bIsRunningCommand = false;
 }
 
