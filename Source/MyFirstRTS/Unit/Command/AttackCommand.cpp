@@ -51,14 +51,14 @@ void UAttackCommand::Execute()
 		return;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ExecuteAttackCommand"));
+	UE_LOG(LogTemp, Warning, TEXT("ExecuteAttackCommand"));
 
 	// TODO move to target
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(this->UnitRef);
 	movementCommmand->SetTargetPosition(this->AttackTargetRef->GetActorLocation());
-	movementCommmand->SetOnCommandSuccess(this->OnReachAttackTargetDelegate);
-	movementCommmand->SetOnCommandFail(this->OnReachAttackTargetFailDelegate);
+	movementCommmand->SetOnSuccess(this->OnReachAttackTargetDelegate);
+	movementCommmand->SetOnFail(this->OnReachAttackTargetFailDelegate);
 	asWorker->ExecuteCommand(movementCommmand);
 	// TODO attack after reaching target.
 }

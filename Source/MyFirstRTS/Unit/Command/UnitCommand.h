@@ -30,6 +30,6 @@ public:
 
 public: 
 	void SetUnit(AActor* Unit);
-	void SetOnCommandSuccess(FActionSignature Callback);
-	void SetOnCommandFail(FActionSignature Callback);
+	void SetOnSuccess(FActionSignature Callback);
+	void SetOnFail(FActionSignature Callback);
 };

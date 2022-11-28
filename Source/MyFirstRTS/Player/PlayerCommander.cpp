@@ -26,8 +26,8 @@ void APlayerCommander::ExecuteGatherCommand(AActor* Resource, AActor* UnitRef, F
 	UGatherCommand* gatherCommand = NewObject<UGatherCommand>();
 	gatherCommand->SetUnit(UnitRef);
 	gatherCommand->SetResource(Resource);
-	gatherCommand->SetOnCommandSuccess(OnSuccess);
-	gatherCommand->SetOnCommandFail(OnFail);
+	gatherCommand->SetOnSuccess(OnSuccess);
+	gatherCommand->SetOnFail(OnFail);
 	asWorker->ExecuteCommand(gatherCommand);
 }
 
@@ -41,8 +41,8 @@ void APlayerCommander::ExecuteMovementCommand(FVector TargetPosition, AActor* Un
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(UnitRef);
 	movementCommmand->SetTargetPosition(TargetPosition);
-	movementCommmand->SetOnCommandSuccess(OnSuccess);
-	movementCommmand->SetOnCommandFail(OnFail);
+	movementCommmand->SetOnSuccess(OnSuccess);
+	movementCommmand->SetOnFail(OnFail);
 	asWorker->ExecuteCommand(movementCommmand);
 }
 
@@ -68,8 +68,8 @@ void APlayerCommander::ExecuteStoreCommand(AActor* Storage, AActor* UnitRef, FAc
 	UStoreCommand* storeCommand = NewObject<UStoreCommand>();
 	storeCommand->SetUnit(UnitRef);
 	storeCommand->SetStorage(Storage);
-	storeCommand->SetOnCommandSuccess(OnSuccess);
-	storeCommand->SetOnCommandFail(OnFail);
+	storeCommand->SetOnSuccess(OnSuccess);
+	storeCommand->SetOnFail(OnFail);
 	asWorker->ExecuteCommand(storeCommand);
 }
 

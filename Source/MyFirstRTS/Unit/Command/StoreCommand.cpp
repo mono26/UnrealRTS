@@ -39,13 +39,15 @@ void UStoreCommand::Execute()
 		return;
 	}
 
-	DrawDebugSphere(point->GetWorld(), point->GetComponentLocation(), 100, 12, FColor::Magenta, false, 3.0);
+	// DrawDebugSphere(point->GetWorld(), point->GetComponentLocation(), 100, 12, FColor::Magenta, false, 3.0);
+
+	UE_LOG(LogTemp, Warning, TEXT("ExecuteStoreCommand"));
 
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(this->UnitRef);
 	movementCommmand->SetTargetPosition(point->GetComponentLocation());
-	movementCommmand->SetOnCommandSuccess(this->OnReachStorageDelegate);
-	movementCommmand->SetOnCommandFail(this->OnFail);
+	movementCommmand->SetOnSuccess(this->OnReachStorageDelegate);
+	movementCommmand->SetOnFail(this->OnFail);
 	asWorker->ExecuteCommand(movementCommmand);
 }
 

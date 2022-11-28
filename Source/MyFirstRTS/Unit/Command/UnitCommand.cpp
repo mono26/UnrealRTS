@@ -13,12 +13,12 @@ void UUnitCommand::SetUnit(AActor* Unit)
 	this->UnitRef = Unit;
 }
 
-void UUnitCommand::SetOnCommandSuccess(FActionSignature Callback)
+void UUnitCommand::SetOnSuccess(FActionSignature Callback)
 {
 	this->OnSuccess = Callback;
 }
 
-void UUnitCommand::SetOnCommandFail(FActionSignature Callback)
+void UUnitCommand::SetOnFail(FActionSignature Callback)
 {
 	this->OnFail = Callback;
 }

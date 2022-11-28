@@ -35,11 +35,13 @@ void UGatherCommand::Execute()
 		return;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("ExecuteGatherCommand"));
+
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(this->UnitRef);
 	movementCommmand->SetTargetPosition(asWorker->GetTargetResource()->GetActorLocation());
-	movementCommmand->SetOnCommandSuccess(this->OnReachResourceDelegate);
-	movementCommmand->SetOnCommandFail(this->OnFail);
+	movementCommmand->SetOnSuccess(this->OnReachResourceDelegate);
+	movementCommmand->SetOnFail(this->OnFail);
 	asWorker->ExecuteCommand(movementCommmand);
 }
 

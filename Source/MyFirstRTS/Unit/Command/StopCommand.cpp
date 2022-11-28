@@ -21,6 +21,8 @@ void UStopCommand::Execute()
 		return;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("ExecuteStopCommand"));
+
 	asWorker->StopAllActions();
 
 	this->OnSuccess.ExecuteIfBound();

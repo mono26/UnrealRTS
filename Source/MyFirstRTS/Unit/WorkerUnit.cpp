@@ -187,6 +187,10 @@ void AWorkerUnit::OnExtractResource()
 
 void AWorkerUnit::StoreResource()
 {
+	if (this->CarriedResource.ResourceType == EResourceType::None || this->CarriedResource.ResourceAmount <= 0) {
+		return;
+	}
+
 	APlayerCommander* commander = Cast<APlayerCommander>(UGameplayStatics::GetPlayerController(this, 0));
 	commander->ReceiveResources(this->CarriedResource.ResourceType, this->CarriedResource.ResourceAmount);
 	// TODO delete old resource? Or maybe just create a pointer and set the inner values.
