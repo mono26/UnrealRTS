@@ -4,8 +4,9 @@
 #include "AttackCommand.h"
 #include "../WorkerUnit.h"
 #include "MovementCommand.h"
+#include "../../Component/InteractableComponent.h"
 
-UAttackCommand::UAttackCommand() : UUnitCommand()
+UAttackCommand::UAttackCommand() : Super()
 {
 	this->AttackTargetRef = nullptr;
 
@@ -13,9 +14,9 @@ UAttackCommand::UAttackCommand() : UUnitCommand()
 	this->OnReachAttackTargetFailDelegate.BindUFunction(this, FName("OnReachAttackTargetFail"));
 }
 
-void UAttackCommand::SetAttackTarget(AActor* Target)
+void UAttackCommand::SetAttackTarget(AActor* AttackTarget)
 {
-	this->AttackTargetRef = Target;
+	this->AttackTargetRef = AttackTarget;
 }
 
 void UAttackCommand::OnReachAttackTarget()
@@ -32,6 +33,8 @@ void UAttackCommand::OnReachAttackTargetFail()
 
 void UAttackCommand::Execute()
 {
+	UE_LOG(LogTemp, Warning, TEXT("TryExecuteAttackCommand"));
+
 	// TODO uncomment this.
 	if (/*this->AttackTargetRef == nullptr || */this->UnitRef == nullptr) {
 		this->OnFail.ExecuteIfBound();
@@ -40,6 +43,8 @@ void UAttackCommand::Execute()
 
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
 	if (asWorker == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("Not a worker."));
+
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
@@ -47,16 +52,28 @@ void UAttackCommand::Execute()
 	// TODO don't do it like this always use the resource from the commmand.
 	asWorker->SetAttackTarget(this->AttackTargetRef != nullptr ? this->AttackTargetRef : asWorker->GetAttackTarget());
 	if (asWorker->GetAttackTarget() == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("No attack target."));
+
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
+
+	UInteractableComponent* interactableComponent = asWorker->GetAttackTarget()->FindComponentByClass<UInteractableComponent>();
+	if (interactableComponent == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("No interactable target."));
+
+		this->OnFail.ExecuteIfBound();
+		return;
+	}
+
+	FVector interactPosition = interactableComponent->GetClosestInteractionPositionTo(this->UnitRef);
 
 	UE_LOG(LogTemp, Warning, TEXT("ExecuteAttackCommand"));
 
 	// TODO move to target
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(this->UnitRef);
-	movementCommmand->SetTargetPosition(this->AttackTargetRef->GetActorLocation());
+	movementCommmand->SetTargetPosition(interactPosition);
 	movementCommmand->SetOnSuccess(this->OnReachAttackTargetDelegate);
 	movementCommmand->SetOnFail(this->OnReachAttackTargetFailDelegate);
 	asWorker->ExecuteCommand(movementCommmand);

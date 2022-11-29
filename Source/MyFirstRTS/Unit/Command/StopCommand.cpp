@@ -4,7 +4,7 @@
 #include "StopCommand.h"
 #include "../WorkerUnit.h"
 
-UStopCommand::UStopCommand() : UUnitCommand()
+UStopCommand::UStopCommand() : Super()
 {
 }
 

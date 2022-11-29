@@ -7,7 +7,7 @@
 #include "../../Component/InteractableComponent.h"
 #include "DrawDebugHelpers.h"
 
-UStoreCommand::UStoreCommand()
+UStoreCommand::UStoreCommand() : Super()
 {
 	this->StorageRef = nullptr;
 
@@ -33,17 +33,13 @@ void UStoreCommand::Execute()
 		return;
 	}
 
-	USceneComponent* point = interactableComponent->GetClosestInteractionPointTo(this->UnitRef);
-	if (point == nullptr) {
-		this->OnFail.ExecuteIfBound();
-		return;
-	}
+	FVector interactPosition = interactableComponent->GetClosestInteractionPositionTo(this->UnitRef);
 
 	// UE_LOG(LogTemp, Warning, TEXT("ExecuteStoreCommand"));
 
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(this->UnitRef);
-	movementCommmand->SetTargetPosition(point->GetComponentLocation());
+	movementCommmand->SetTargetPosition(interactPosition);
 	movementCommmand->SetOnSuccess(this->OnReachStorageDelegate);
 	movementCommmand->SetOnFail(this->OnFail);
 	asWorker->ExecuteCommand(movementCommmand);

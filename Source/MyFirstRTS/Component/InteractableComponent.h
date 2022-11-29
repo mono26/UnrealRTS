@@ -29,7 +29,7 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Interactable")
-	USceneComponent* GetClosestInteractionPointTo(AActor* Actor);
+	FVector GetClosestInteractionPositionTo(AActor* Actor);
 
 	UFUNCTION(BlueprintCallable, Category = "Interactable")
 	float GetInteractableRadius();

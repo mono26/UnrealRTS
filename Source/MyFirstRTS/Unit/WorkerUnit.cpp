@@ -16,11 +16,11 @@ AWorkerUnit::AWorkerUnit()
 
 	this->AttackTargetRef = nullptr;
 
-	this->OnExtractResourceDelegate.BindUFunction(this, FName("OnExtractResource"));
-
 	this->GatherTimer = nullptr;
 
 	this->CarriedResource = FResource();
+
+	this->OnExtractResourceDelegate.BindUFunction(this, FName("OnExtractResource"));
 }
 
 // Called when the game starts or when spawned
@@ -59,7 +59,11 @@ AActor* AWorkerUnit::GetAttackTarget()
 
 void AWorkerUnit::SetAttackTarget(AActor* AttackTarget)
 {
-	UE_LOG(LogTemp, Warning, TEXT("SetAttackTarget %s"), *AttackTarget->GetName());
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("SetAttackTarget."));
+
+	if (AttackTarget != nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("SetAttackTarget %s"), *AttackTarget->GetName());
+	}
 
 	AActor* oldTarget = this->AttackTargetRef;
 	this->AttackTargetRef = AttackTarget;
@@ -169,7 +173,7 @@ void AWorkerUnit::ExtractResource()
 		return;
 	}
 
-	this->GatherTimer = new FExtendedTimer(&GetWorld()->GetTimerManager(), 3.0f, this->OnExtractResourceDelegate, this->GatherRequest.GetOnFail());
+	this->GatherTimer = new FExtendedTimer(&this->GetWorld()->GetTimerManager(), 3.0f, this->OnExtractResourceDelegate, this->GatherRequest.GetOnFail());
 
 	this->UnitComponent->SetCurrentState(EUnitStates::Gathering);
 }

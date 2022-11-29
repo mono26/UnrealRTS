@@ -3,7 +3,7 @@
 
 #include "UnitCommand.h"
 
-UUnitCommand::UUnitCommand() : UObject()
+UUnitCommand::UUnitCommand() : Super()
 {
 	this->UnitRef = nullptr;
 }

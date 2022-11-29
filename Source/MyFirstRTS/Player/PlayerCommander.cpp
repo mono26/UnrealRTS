@@ -8,69 +8,20 @@
 #include "../Unit/Command/GatherCommand.h"
 #include "../Unit/Command/StoreCommand.h"
 
-void APlayerCommander::ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail)
+// Sets default values for this component's properties
+APlayerCommander::APlayerCommander() : Super()
 {
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
-	if (asWorker == nullptr) {
-		return;
-	}
+	this->CommandComponent = nullptr;
 }
 
-void APlayerCommander::ExecuteGatherCommand(AActor* Resource, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail)
+
+// Called when the game starts
+void APlayerCommander::BeginPlay()
 {
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
-	if (asWorker == nullptr) {
-		return;
-	}
+	Super::BeginPlay();
 
-	UGatherCommand* gatherCommand = NewObject<UGatherCommand>();
-	gatherCommand->SetUnit(UnitRef);
-	gatherCommand->SetResource(Resource);
-	gatherCommand->SetOnSuccess(OnSuccess);
-	gatherCommand->SetOnFail(OnFail);
-	asWorker->ExecuteCommand(gatherCommand);
-}
-
-void APlayerCommander::ExecuteMovementCommand(FVector TargetPosition, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail)
-{
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
-	if (asWorker == nullptr) {
-		return;
-	}
-
-	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
-	movementCommmand->SetUnit(UnitRef);
-	movementCommmand->SetTargetPosition(TargetPosition);
-	movementCommmand->SetOnSuccess(OnSuccess);
-	movementCommmand->SetOnFail(OnFail);
-	asWorker->ExecuteCommand(movementCommmand);
-}
-
-void APlayerCommander::ExecuteStopCommand(AActor* UnitRef)
-{
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
-	if (asWorker == nullptr) {
-		return;
-	}
-
-	UStopCommand* stopCommand = NewObject<UStopCommand>();
-	stopCommand->SetUnit(UnitRef);
-	asWorker->ExecuteCommand(stopCommand);
-}
-
-void APlayerCommander::ExecuteStoreCommand(AActor* Storage, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail)
-{
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
-	if (asWorker == nullptr) {
-		return;
-	}
-
-	UStoreCommand* storeCommand = NewObject<UStoreCommand>();
-	storeCommand->SetUnit(UnitRef);
-	storeCommand->SetStorage(Storage);
-	storeCommand->SetOnSuccess(OnSuccess);
-	storeCommand->SetOnFail(OnFail);
-	asWorker->ExecuteCommand(storeCommand);
+	// ...
+	this->CommandComponent = this->FindComponentByClass<UCommanderComponent>();
 }
 
 AActor* APlayerCommander::GetPlayerTownhall()

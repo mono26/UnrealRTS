@@ -3,7 +3,7 @@
 #include "MovementCommand.h"
 #include "../WorkerUnit.h"
 
-UMovementCommand::UMovementCommand() : UUnitCommand()
+UMovementCommand::UMovementCommand() : Super()
 {
 	this->TargetPosition = FVector::Zero();
 

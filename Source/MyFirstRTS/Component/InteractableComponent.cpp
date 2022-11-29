@@ -33,16 +33,16 @@ void UInteractableComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
-USceneComponent* UInteractableComponent::GetClosestInteractionPointTo(AActor* Actor)
+FVector UInteractableComponent::GetClosestInteractionPositionTo(AActor* Actor)
 {
 	if (Actor == nullptr) {
-		return nullptr;
+		return FVector::Zero();
 	}
 
 	TArray<UInteractionPoint*> points;
 	this->GetOwner()->GetComponents<UInteractionPoint>(points, false);
 	if (points.IsEmpty()) {
-		return nullptr;
+		return this->GetOwner()->GetActorLocation();
 	}
 
 	float closestSqrDistance = 9999999999999999.0f;
@@ -60,7 +60,7 @@ USceneComponent* UInteractableComponent::GetClosestInteractionPointTo(AActor* Ac
 		}
 	}
 
-	return closestPoint;
+	return closestPoint->GetComponentLocation();
 }
 
 float UInteractableComponent::GetInteractableRadius()

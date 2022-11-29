@@ -130,12 +130,11 @@ class MYFIRSTRTS_API AWorkerUnit : public ACharacter
 	GENERATED_BODY()
 
 public:
-
-	UPROPERTY(BlueprintAssignable, Category = "Worker")
+	UPROPERTY(BlueprintAssignable, Category = "Worker|Target")
 	FTargetChangedSignature OnTargetChangedEvent;
 
 	FActionSignature OnExtractResourceDelegate;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Worker")
+	UPROPERTY(BlueprintReadOnly, Category = "Worker|Gathering")
 	FResource CarriedResource;
 
 private:
@@ -188,7 +187,7 @@ public:
 
 	void SetGatherRequest(FGatherRequest Request);
 
-	void ExtractResource(/*AActor* ResourceRef, FActionSignature OnSuccess, FActionSignature OnFail*/);
+	void ExtractResource();
 
 	UFUNCTION()
 	void OnExtractResource();

@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "../Unit/Command/UnitCommand.h"
 #include "../Resource/ResourceComponent.h"
+#include "../Component/CommanderComponent.h"
 #include "PlayerCommander.generated.h"
 
 /**
@@ -19,22 +20,15 @@ class MYFIRSTRTS_API APlayerCommander : public APlayerController
 private:
 	TMap<EResourceType, int> StoredResources;
 
+	UCommanderComponent* CommandComponent = nullptr;
+
 public:
-	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
-	void ExecuteAttackCommand(AActor* Target, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail);
+	APlayerCommander();
 
-	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
-	void ExecuteGatherCommand(AActor* Resource, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail);
+protected:
+	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
-	void ExecuteMovementCommand(FVector TargetPosition, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail);
-
-	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
-	void ExecuteStopCommand(AActor* UnitRef);
-
-	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
-	void ExecuteStoreCommand(AActor* Storage, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail);
-
+public:
 	UFUNCTION(BlueprintCallable, Category = "PlayerCommander")
 	AActor* GetPlayerTownhall();
 

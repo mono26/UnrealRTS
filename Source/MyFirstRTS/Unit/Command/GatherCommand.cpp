@@ -5,7 +5,7 @@
 #include "../WorkerUnit.h"
 #include "MovementCommand.h"
 
-UGatherCommand::UGatherCommand()
+UGatherCommand::UGatherCommand() : Super()
 {
 	this->ResourceRef = nullptr;
 
