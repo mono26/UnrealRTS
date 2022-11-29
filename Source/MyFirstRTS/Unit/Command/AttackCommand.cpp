@@ -50,7 +50,9 @@ void UAttackCommand::Execute()
 	}
 
 	// TODO don't do it like this always use the resource from the commmand.
-	asWorker->SetAttackTarget(this->AttackTargetRef != nullptr ? this->AttackTargetRef : asWorker->GetAttackTarget());
+	AActor* attackTarget = this->AttackTargetRef != nullptr ? this->AttackTargetRef : asWorker->GetAttackTarget();
+	FAttackRequest request = FAttackRequest(attackTarget, this->OnSuccess, this->OnFail);
+	asWorker->SetAttackRequest(request);
 	if (asWorker->GetAttackTarget() == nullptr) {
 		UE_LOG(LogTemp, Warning, TEXT("No attack target."));
 

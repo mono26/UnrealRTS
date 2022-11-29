@@ -122,6 +122,56 @@ public:
 	}
 };
 
+struct FAttackRequest
+{
+private:
+	float RangeToTarget;
+
+	AActor* AttackTargetRef;
+
+	FActionSignature OnSuccess;
+	FActionSignature OnFail;
+
+public:
+	FAttackRequest()
+	{
+
+	}
+
+	FAttackRequest(AActor* AttackTarget, FActionSignature OnSuccessCallback, FActionSignature OnFailCallback)
+	{
+		this->AttackTargetRef = AttackTarget;
+
+		this->OnSuccess = OnSuccessCallback;
+		this->OnFail = OnFailCallback;
+	}
+
+	AActor* GetAttackTargetRef()
+	{
+		return this->AttackTargetRef;
+	}
+
+	FActionSignature GetOnSuccess()
+	{
+		return this->OnSuccess;
+	}
+
+	FActionSignature GetOnFail()
+	{
+		return this->OnFail;
+	}
+
+	float GetRangeToTarget()
+	{
+		return this->RangeToTarget;
+	}
+
+	void SetRangeToTarget(float Range)
+	{
+		this->RangeToTarget = Range;
+	}
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTargetChangedSignature, const AActor*, OldTarget, const AActor*, NewTarget);
 
 UCLASS()
@@ -133,7 +183,6 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Worker|Target")
 	FTargetChangedSignature OnTargetChangedEvent;
 
-	FActionSignature OnExtractResourceDelegate;
 	UPROPERTY(BlueprintReadOnly, Category = "Worker|Gathering")
 	FResource CarriedResource;
 
@@ -142,12 +191,15 @@ private:
 
 	UUnitComponent* UnitComponent = nullptr;
 
-	AActor* AttackTargetRef = nullptr;
+	FAttackRequest AttackRequest;
+	FExtendedTimer* AttackTimer;
+	FActionSignature OnExecuteAttackDelegate;
 
 	TMap<uint32, FMovementRequest> MovementRequest;
 
 	FGatherRequest GatherRequest;
 	FExtendedTimer* GatherTimer;
+	FActionSignature OnExtractResourceDelegate;
 
 public:
 	// Sets default values for this character's properties
@@ -165,11 +217,15 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
+	void ExecuteAttack();
+
 	UFUNCTION(BlueprintCallable, Category = "Worker|Attack")
 	AActor* GetAttackTarget();
 
-	UFUNCTION(BlueprintCallable, Category = "Worker|Attack")
-	void SetAttackTarget(AActor* AttackTarget);
+	void SetAttackRequest(FAttackRequest Request);
+
+	UFUNCTION()
+	void OnExecuteAttack();
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Movement")
 	void MoveToPosition(FVector Position, FActionSignature OnSuccess, FActionSignature OnFail);
@@ -185,12 +241,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Worker|Gathering")
 	AActor* GetTargetResource();
 
-	void SetGatherRequest(FGatherRequest Request);
-
 	void ExtractResource();
 
 	UFUNCTION()
 	void OnExtractResource();
+
+	void SetGatherRequest(FGatherRequest Request);
 
 	void StoreResource();
 

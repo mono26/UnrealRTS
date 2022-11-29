@@ -14,13 +14,13 @@ AWorkerUnit::AWorkerUnit()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	this->AttackTargetRef = nullptr;
-
 	this->GatherTimer = nullptr;
 
-	this->CarriedResource = FResource();
+	this->AttackTimer = nullptr;
 
 	this->OnExtractResourceDelegate.BindUFunction(this, FName("OnExtractResource"));
+
+	this->OnExecuteAttackDelegate.BindUFunction(this, FName("OnExecuteAttack"));
 }
 
 // Called when the game starts or when spawned
@@ -52,25 +52,41 @@ void AWorkerUnit::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 }
 
-AActor* AWorkerUnit::GetAttackTarget()
+void AWorkerUnit::ExecuteAttack()
 {
-	return this->AttackTargetRef;
+	if (this->GetAttackTarget() == nullptr) {
+		return;
+	}
+
+	this->AttackTimer = new FExtendedTimer(&this->GetWorld()->GetTimerManager(), 3.0f, this->OnExtractResourceDelegate, this->AttackRequest.GetOnFail());
+
+	this->UnitComponent->SetCurrentState(EUnitStates::Attacking);
 }
 
-void AWorkerUnit::SetAttackTarget(AActor* AttackTarget)
+AActor* AWorkerUnit::GetAttackTarget()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("SetAttackTarget."));
+	return this->AttackRequest.GetAttackTargetRef();
+}
 
-	if (AttackTarget != nullptr) {
-		UE_LOG(LogTemp, Warning, TEXT("SetAttackTarget %s"), *AttackTarget->GetName());
+void AWorkerUnit::OnExecuteAttack()
+{
+	if (this->GetAttackTarget()) {
+		this->AttackRequest.GetOnFail().ExecuteIfBound();
+		return;
 	}
 
-	AActor* oldTarget = this->AttackTargetRef;
-	this->AttackTargetRef = AttackTarget;
-
-	if (this->OnTargetChangedEvent.IsBound()) {
-		this->OnTargetChangedEvent.Broadcast(oldTarget, this->AttackTargetRef);
+	UResourceComponent* resourceComponent = this->GatherRequest.GetResourceRef()->FindComponentByClass<UResourceComponent>();
+	if (resourceComponent == nullptr) {
+		this->AttackRequest.GetOnFail().ExecuteIfBound();
+		return;
 	}
+
+	this->AttackRequest.GetOnSuccess().ExecuteIfBound();
+}
+
+void AWorkerUnit::SetAttackRequest(FAttackRequest Request)
+{
+	this->AttackRequest = Request;
 }
 
 void AWorkerUnit::MoveToPosition(FVector Position, FActionSignature OnSuccess, FActionSignature OnFail)
@@ -151,7 +167,7 @@ void AWorkerUnit::SetGatherRequest(FGatherRequest Request)
 
 void AWorkerUnit::ExtractResource()
 {
-	if (this->GatherRequest.GetResourceRef() == nullptr) {
+	if (this->GetTargetResource() == nullptr) {
 		this->GatherRequest.GetOnFail().ExecuteIfBound();
 		return;
 	}
@@ -180,6 +196,11 @@ void AWorkerUnit::ExtractResource()
 
 void AWorkerUnit::OnExtractResource()
 {
+	if (this->GetTargetResource()) {
+		this->GatherRequest.GetOnFail().ExecuteIfBound();
+		return;
+	}
+
 	UResourceComponent* resourceComponent = this->GatherRequest.GetResourceRef()->FindComponentByClass<UResourceComponent>();
 	if (resourceComponent == nullptr) {
 		this->GatherRequest.GetOnFail().ExecuteIfBound();
