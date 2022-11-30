@@ -30,20 +30,22 @@ public:
 	FOnStateChangedSignature OnCurrentStateChanged;
 
 	// TODO move current health to it's own component.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Health")
 	float HealthCurrent;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Health")
 	float HealthMax;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Health")
 	FVector HealthBarLocalPos;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Health")
 	FVector2D HealthBarSize;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Attack")
 	float AttackDamage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Attack")
 	float AttackRange;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Attack")
+	float AttackSwingDuration = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit")
 	FVector UnitCenter;

@@ -58,7 +58,7 @@ void AWorkerUnit::ExecuteAttack()
 		return;
 	}
 
-	this->AttackTimer = new FExtendedTimer(&this->GetWorld()->GetTimerManager(), 3.0f, this->OnExtractResourceDelegate, this->AttackRequest.GetOnFail());
+	this->AttackTimer = new FExtendedTimer(&this->GetWorld()->GetTimerManager(), this->UnitComponent->AttackSwingDuration, this->OnExecuteAttackDelegate, this->AttackRequest.GetOnFail());
 
 	this->UnitComponent->SetCurrentState(EUnitStates::Attacking);
 }
@@ -70,16 +70,13 @@ AActor* AWorkerUnit::GetAttackTarget()
 
 void AWorkerUnit::OnExecuteAttack()
 {
-	if (this->GetAttackTarget()) {
+	if (this->GetAttackTarget() == nullptr) {
 		this->AttackRequest.GetOnFail().ExecuteIfBound();
 		return;
 	}
 
-	UResourceComponent* resourceComponent = this->GatherRequest.GetResourceRef()->FindComponentByClass<UResourceComponent>();
-	if (resourceComponent == nullptr) {
-		this->AttackRequest.GetOnFail().ExecuteIfBound();
-		return;
-	}
+	AActor* target = this->GetAttackTarget();
+	UGameplayStatics::ApplyDamage(target, this->UnitComponent->AttackDamage, this->GetController(), this, nullptr);
 
 	this->AttackRequest.GetOnSuccess().ExecuteIfBound();
 }

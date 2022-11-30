@@ -18,7 +18,6 @@ protected:
 	AActor* AttackTargetRef;
 
 	FActionSignature OnReachAttackTargetDelegate;
-	FActionSignature OnReachAttackTargetFailDelegate;
 
 public:
 	UAttackCommand();
@@ -31,6 +30,4 @@ public:
 
 	UFUNCTION()
 	void OnReachAttackTarget();
-	UFUNCTION()
-	void OnReachAttackTargetFail();
 };

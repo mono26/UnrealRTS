@@ -11,24 +11,6 @@ UAttackCommand::UAttackCommand() : Super()
 	this->AttackTargetRef = nullptr;
 
 	this->OnReachAttackTargetDelegate.BindUFunction(this, FName("OnReachAttackTarget"));
-	this->OnReachAttackTargetFailDelegate.BindUFunction(this, FName("OnReachAttackTargetFail"));
-}
-
-void UAttackCommand::SetAttackTarget(AActor* AttackTarget)
-{
-	this->AttackTargetRef = AttackTarget;
-}
-
-void UAttackCommand::OnReachAttackTarget()
-{
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnReachAttackTarget"));
-}
-
-void UAttackCommand::OnReachAttackTargetFail()
-{
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnReachAttackTargetFail"));
-
-	this->OnFail.ExecuteIfBound();
 }
 
 void UAttackCommand::Execute()
@@ -77,7 +59,27 @@ void UAttackCommand::Execute()
 	movementCommmand->SetUnit(this->UnitRef);
 	movementCommmand->SetTargetPosition(interactPosition);
 	movementCommmand->SetOnSuccess(this->OnReachAttackTargetDelegate);
-	movementCommmand->SetOnFail(this->OnReachAttackTargetFailDelegate);
+	movementCommmand->SetOnFail(this->OnFail);
 	asWorker->ExecuteCommand(movementCommmand);
 	// TODO attack after reaching target.
+}
+
+void UAttackCommand::SetAttackTarget(AActor* AttackTarget)
+{
+	this->AttackTargetRef = AttackTarget;
+}
+
+void UAttackCommand::OnReachAttackTarget()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnReachAttackTarget"));
+
+	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
+	if (asWorker == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("Not a worker."));
+
+		this->OnFail.ExecuteIfBound();
+		return;
+	}
+
+	asWorker->ExecuteAttack();
 }

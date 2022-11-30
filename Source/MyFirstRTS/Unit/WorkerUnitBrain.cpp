@@ -110,17 +110,17 @@ void UWorkerUnitBrain::OnSightUpdated(AActor* Instigator)
 
 	if (currentTarget->GetComponentByClass(UUnitComponent::StaticClass()) != nullptr && Instigator->GetComponentByClass(UUnitComponent::StaticClass()) != nullptr) {
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Select closest unit."));
-		asWorker->SetAttackTarget(this->SelectClosestActor(currentTarget, Instigator));
+		// asWorker->SetAttackTarget(this->SelectClosestActor(currentTarget, Instigator));
 	}
 	else if (currentTarget->GetComponentByClass(UBuildingComponent::StaticClass()) != nullptr) {
 		// Units have priority over buildings.
 		if (Instigator->GetComponentByClass(UUnitComponent::StaticClass()) != nullptr) {
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Target unit."));
-			asWorker->SetAttackTarget(Instigator);
+			// asWorker->SetAttackTarget(Instigator);
 		}
 		else if (Instigator->GetComponentByClass(UBuildingComponent::StaticClass()) != nullptr) {
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Select closest building."));
-			asWorker->SetAttackTarget(this->SelectClosestActor(currentTarget, Instigator));
+			// asWorker->SetAttackTarget(this->SelectClosestActor(currentTarget, Instigator));
 		}
 	}
 }
