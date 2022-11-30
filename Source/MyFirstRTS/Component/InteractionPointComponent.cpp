@@ -1,21 +1,21 @@
 // Copyright: For learning purposes, Mono Zubiria.
 
 
-#include "InteractionPoint.h"
+#include "InteractionPointComponent.h"
 
 // Sets default values for this component's properties
-UInteractionPoint::UInteractionPoint()
+UInteractionPointComponent::UInteractionPointComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
 
 
 // Called when the game starts
-void UInteractionPoint::BeginPlay()
+void UInteractionPointComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -25,7 +25,7 @@ void UInteractionPoint::BeginPlay()
 
 
 // Called every frame
-void UInteractionPoint::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UInteractionPointComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 

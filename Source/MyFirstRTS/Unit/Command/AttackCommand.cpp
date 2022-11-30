@@ -15,8 +15,6 @@ UAttackCommand::UAttackCommand() : Super()
 
 void UAttackCommand::Execute()
 {
-	UE_LOG(LogTemp, Warning, TEXT("TryExecuteAttackCommand"));
-
 	// TODO uncomment this.
 	if (/*this->AttackTargetRef == nullptr || */this->UnitRef == nullptr) {
 		this->OnFail.ExecuteIfBound();
@@ -26,7 +24,6 @@ void UAttackCommand::Execute()
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
 	if (asWorker == nullptr) {
 		UE_LOG(LogTemp, Warning, TEXT("Not a worker."));
-
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
@@ -37,7 +34,6 @@ void UAttackCommand::Execute()
 	asWorker->SetAttackRequest(request);
 	if (asWorker->GetAttackTarget() == nullptr) {
 		UE_LOG(LogTemp, Warning, TEXT("No attack target."));
-
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
@@ -45,14 +41,11 @@ void UAttackCommand::Execute()
 	UInteractableComponent* interactableComponent = asWorker->GetAttackTarget()->FindComponentByClass<UInteractableComponent>();
 	if (interactableComponent == nullptr) {
 		UE_LOG(LogTemp, Warning, TEXT("No interactable target."));
-
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
 
 	FVector interactPosition = interactableComponent->GetClosestInteractionPositionTo(this->UnitRef);
-
-	UE_LOG(LogTemp, Warning, TEXT("ExecuteAttackCommand"));
 
 	// TODO move to target
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();

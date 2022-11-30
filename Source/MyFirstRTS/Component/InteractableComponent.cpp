@@ -2,14 +2,14 @@
 
 
 #include "InteractableComponent.h"
-#include "InteractionPoint.h"
+#include "InteractionPointComponent.h"
 
 // Sets default values for this component's properties
 UInteractableComponent::UInteractableComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
@@ -39,15 +39,15 @@ FVector UInteractableComponent::GetClosestInteractionPositionTo(AActor* Actor)
 		return FVector::Zero();
 	}
 
-	TArray<UInteractionPoint*> points;
-	this->GetOwner()->GetComponents<UInteractionPoint>(points, false);
+	TArray<UInteractionPointComponent*> points;
+	this->GetOwner()->GetComponents<UInteractionPointComponent>(points, false);
 	if (points.IsEmpty()) {
 		return this->GetOwner()->GetActorLocation();
 	}
 
 	float closestSqrDistance = 9999999999999999.0f;
-	UInteractionPoint* closestPoint = nullptr;
-	for (UInteractionPoint* point : points) {
+	UInteractionPointComponent* closestPoint = nullptr;
+	for (UInteractionPointComponent* point : points) {
 		if (closestPoint == nullptr) {
 			closestSqrDistance = FVector::DistSquared(Actor->GetActorLocation(), point->GetComponentLocation());
 			closestPoint = point;

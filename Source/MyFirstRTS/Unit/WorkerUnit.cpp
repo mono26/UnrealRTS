@@ -70,12 +70,14 @@ AActor* AWorkerUnit::GetAttackTarget()
 
 void AWorkerUnit::OnExecuteAttack()
 {
-	if (this->GetAttackTarget() == nullptr) {
+	AActor* target = this->GetAttackTarget();
+	if (target == nullptr) {
 		this->AttackRequest.GetOnFail().ExecuteIfBound();
 		return;
 	}
 
-	AActor* target = this->GetAttackTarget();
+	UE_LOG(LogTemp, Warning, TEXT("Attacking %s."), *target->GetName());
+
 	UGameplayStatics::ApplyDamage(target, this->UnitComponent->AttackDamage, this->GetController(), this, nullptr);
 
 	this->AttackRequest.GetOnSuccess().ExecuteIfBound();

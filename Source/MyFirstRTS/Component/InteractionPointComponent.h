@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
-#include "InteractionPoint.generated.h"
+#include "InteractionPointComponent.generated.h"
 
 
 UCLASS(Blueprintable,ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class MYFIRSTRTS_API UInteractionPoint : public USceneComponent
+class MYFIRSTRTS_API UInteractionPointComponent : public USceneComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UInteractionPoint();
+	UInteractionPointComponent();
 
 protected:
 	// Called when the game starts
