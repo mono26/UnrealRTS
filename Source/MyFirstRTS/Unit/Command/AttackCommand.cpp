@@ -16,8 +16,14 @@ UAttackCommand::UAttackCommand() : Super()
 
 void UAttackCommand::Execute()
 {
-	// TODO uncomment this.
-	if (/*this->AttackTargetRef == nullptr || */this->UnitRef == nullptr) {
+	if (this->AttackTargetRef == nullptr || this->UnitRef == nullptr) {
+		this->OnFail.ExecuteIfBound();
+		return;
+	}
+
+	UInteractableComponent* interactableComponent = this->AttackTargetRef->FindComponentByClass<UInteractableComponent>();
+	if (interactableComponent == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("No interactable target."));
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
@@ -29,35 +35,19 @@ void UAttackCommand::Execute()
 		return;
 	}
 
-	// TODO don't do it like this always use the resource from the commmand.
-	AActor* attackTarget = this->AttackTargetRef != nullptr ? this->AttackTargetRef : asWorker->GetAttackTarget();
-	FAttackRequest request = FAttackRequest(attackTarget, this->OnSuccess, this->OnFail);
+	FAttackRequest request = FAttackRequest(this->AttackTargetRef, this->OnSuccess, this->OnFail);
 	asWorker->SetAttackRequest(request);
-	if (asWorker->GetAttackTarget() == nullptr) {
-		UE_LOG(LogTemp, Warning, TEXT("No attack target."));
-		this->OnFail.ExecuteIfBound();
-		return;
-	}
-
-	UInteractableComponent* interactableComponent = asWorker->GetAttackTarget()->FindComponentByClass<UInteractableComponent>();
-	if (interactableComponent == nullptr) {
-		UE_LOG(LogTemp, Warning, TEXT("No interactable target."));
-		this->OnFail.ExecuteIfBound();
-		return;
-	}
 
 	UE_LOG(LogTemp, Warning, TEXT("ExecuteAttackCommand"));
 
 	FVector interactPosition = interactableComponent->GetClosestInteractionPositionTo(this->UnitRef);
 
-	// TODO move to target
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(this->UnitRef);
 	movementCommmand->SetTargetPosition(interactPosition);
 	movementCommmand->SetOnSuccess(this->OnReachAttackTargetDelegate);
 	movementCommmand->SetOnFail(this->OnFail);
 	asWorker->ExecuteCommand(movementCommmand);
-	// TODO attack after reaching target.
 }
 
 void UAttackCommand::SetAttackTarget(AActor* AttackTarget)

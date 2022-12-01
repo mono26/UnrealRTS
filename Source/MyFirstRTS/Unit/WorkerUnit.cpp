@@ -73,7 +73,11 @@ void AWorkerUnit::ClearAttackRequest()
 
 	this->SetAttackRequest(FAttackRequest());
 
-	this->AttackTimer->Stop();
+	if (this->AttackTimer != nullptr) {
+		FExtendedTimer* timer = this->AttackTimer;
+		this->AttackTimer = nullptr;
+		timer->Stop();
+	}
 }
 
 AActor* AWorkerUnit::GetAttackTarget() const
@@ -91,7 +95,7 @@ void AWorkerUnit::OnExecuteAttack()
 
 	float currentDistance = FVector::DistSquared(this->GetActorLocation(), this->GetAttackTarget()->GetActorLocation());
 	if (this->AttackRequest->GetDistanceToTarget() > currentDistance) {
-		this->AttackRequest->GetOnFail().ExecuteIfBound();
+		this->OwnerCommander->ExecuteAttackCommand(this->GetAttackTarget(), this, this->AttackRequest->GetOnSuccess(), this->AttackRequest->GetOnFail());
 		return;
 	}
 
@@ -183,6 +187,17 @@ void AWorkerUnit::OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFoll
 	// delete request;
 }
 
+void AWorkerUnit::ClearGatherRequest()
+{
+	this->SetGatherRequest(FGatherRequest());
+
+	if (this->GatherTimer != nullptr) {
+		FExtendedTimer* timer = this->GatherTimer;
+		this->GatherTimer = nullptr;
+		timer->Stop();
+	}
+}
+
 AActor* AWorkerUnit::GetTargetResource() const
 {
 	return this->GatherRequest->GetResourceRef();
@@ -193,6 +208,8 @@ void AWorkerUnit::SetGatherRequest(FGatherRequest Request)
 	this->GatherRequest->SetResourceRef(Request.GetResourceRef());
 	this->GatherRequest->SetOnSuccess(Request.GetOnSuccess());
 	this->GatherRequest->SetOnFail(Request.GetOnFail());
+
+	// TODO trigger on resource changed.
 }
 
 void AWorkerUnit::ExtractResource()
@@ -266,6 +283,11 @@ bool AWorkerUnit::GetIsRunningCommand()
 	return this->bIsRunningCommand;
 }
 
+void AWorkerUnit::SetOwnerCommander(UCommanderComponent* Commander)
+{
+	this->OwnerCommander = Commander;
+}
+
 void AWorkerUnit::StopAllActions()
 {
 	if (this->GetController() == nullptr) {
@@ -279,11 +301,9 @@ void AWorkerUnit::StopAllActions()
 
 	controller->StopMovement();
 
-	if (this->GatherTimer != nullptr) {
-		FExtendedTimer* timer = this->GatherTimer;
-		this->GatherTimer = nullptr;
-		timer->Stop();
-	}
+	this->ClearAttackRequest();
+
+	this->ClearGatherRequest();
 
 	// this->SetAttackTarget(nullptr);
 	this->UnitComponent->SetCurrentState(EUnitStates::Idle);

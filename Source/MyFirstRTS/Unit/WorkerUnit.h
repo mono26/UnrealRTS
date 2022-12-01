@@ -10,6 +10,7 @@
 #include "../Resource/ResourceComponent.h"
 #include "../Unit/UnitComponent.h"
 #include "../Unit/Command/UnitCommand.h"
+#include "../Component/CommanderComponent.h"
 #include "WorkerUnit.generated.h"
 
 struct FMovementRequest
@@ -219,6 +220,8 @@ public:
 private:
 	bool bIsRunningCommand = false;
 
+	UCommanderComponent* OwnerCommander = nullptr;
+
 	UUnitComponent* UnitComponent = nullptr;
 
 	FAttackRequest* AttackRequest;
@@ -271,6 +274,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Worker|Movement")
 	void OnStartMovement();
 
+	void ClearGatherRequest();
+
 	UFUNCTION(BlueprintCallable, Category = "Worker|Gathering")
 	AActor* GetTargetResource() const;
 
@@ -288,6 +293,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Commands")
 	bool GetIsRunningCommand();
+
+	void SetOwnerCommander(UCommanderComponent* Commander);
 
 	UFUNCTION(BlueprintCallable, Category = "Worker")
 	void StopAllActions();

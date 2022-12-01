@@ -4,6 +4,8 @@
 #include "GatherCommand.h"
 #include "../WorkerUnit.h"
 #include "MovementCommand.h"
+#include "../../Component/InteractableComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 UGatherCommand::UGatherCommand() : Super()
 {
@@ -14,8 +16,14 @@ UGatherCommand::UGatherCommand() : Super()
 
 void UGatherCommand::Execute()
 {
-	// TODO uncomment this.
-	if (/*this->ResourceRef == nullptr || */this->UnitRef == nullptr) {
+	if (this->ResourceRef == nullptr || this->UnitRef == nullptr) {
+		this->OnFail.ExecuteIfBound();
+		return;
+	}
+
+	UInteractableComponent* interactableComponent = this->ResourceRef->FindComponentByClass<UInteractableComponent>();
+	if (interactableComponent == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("No interactable target."));
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
@@ -26,16 +34,10 @@ void UGatherCommand::Execute()
 		return;
 	}
 
-	// TODO don't do it like this always use the resource from the commmand.
-	AActor* targetResource = this->ResourceRef != nullptr ? this->ResourceRef : asWorker->GetTargetResource();
-	FGatherRequest gatherRequest = FGatherRequest(targetResource, this->OnSuccess, this->OnFail);
+	FGatherRequest gatherRequest = FGatherRequest(this->ResourceRef, this->OnSuccess, this->OnFail);
 	asWorker->SetGatherRequest(gatherRequest);
-	if (asWorker->GetTargetResource() == nullptr) {
-		this->OnFail.ExecuteIfBound();
-		return;
-	}
 
-	// UE_LOG(LogTemp, Warning, TEXT("ExecuteGatherCommand"));
+	UE_LOG(LogTemp, Warning, TEXT("ExecuteGatherCommand"));
 
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(this->UnitRef);
@@ -57,6 +59,15 @@ void UGatherCommand::OnReachResource()
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
+
+	if (asWorker->GetTargetResource() == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("No target resource."));
+		this->OnFail.ExecuteIfBound();
+		return;
+	}
+
+	FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(asWorker->GetActorLocation(), asWorker->GetTargetResource()->GetActorLocation());
+	asWorker->SetActorRotation(lookAtRotation);
 
 	asWorker->ExtractResource();
 }
