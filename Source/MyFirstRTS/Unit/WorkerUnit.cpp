@@ -243,12 +243,12 @@ void AWorkerUnit::ExtractResource()
 
 void AWorkerUnit::OnExtractResource()
 {
-	if (this->GetTargetResource()) {
+	if (this->GetTargetResource() == nullptr) {
 		this->GatherRequest->GetOnFail().ExecuteIfBound();
 		return;
 	}
 
-	UResourceComponent* resourceComponent = this->GatherRequest->GetResourceRef()->FindComponentByClass<UResourceComponent>();
+	UResourceComponent* resourceComponent = this->GetTargetResource()->FindComponentByClass<UResourceComponent>();
 	if (resourceComponent == nullptr) {
 		this->GatherRequest->GetOnFail().ExecuteIfBound();
 		return;

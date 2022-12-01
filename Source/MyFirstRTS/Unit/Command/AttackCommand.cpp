@@ -72,7 +72,11 @@ void UAttackCommand::OnReachAttackTarget()
 		return;
 	}
 
-	FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(asWorker->GetActorLocation(), asWorker->GetAttackTarget()->GetActorLocation());
+	FVector currentLocation = asWorker->GetActorLocation();
+	FVector targetLocation = asWorker->GetAttackTarget()->GetActorLocation();
+	targetLocation.Z = currentLocation.Z;
+
+	FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(currentLocation, targetLocation);
 	asWorker->SetActorRotation(lookAtRotation);
 
 	asWorker->ExecuteAttack();

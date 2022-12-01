@@ -66,7 +66,11 @@ void UGatherCommand::OnReachResource()
 		return;
 	}
 
-	FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(asWorker->GetActorLocation(), asWorker->GetTargetResource()->GetActorLocation());
+	FVector currentLocation = asWorker->GetActorLocation();
+	FVector resourceLocation = asWorker->GetTargetResource()->GetActorLocation();
+	resourceLocation.Z = currentLocation.Z;
+
+	FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(currentLocation, resourceLocation);
 	asWorker->SetActorRotation(lookAtRotation);
 
 	asWorker->ExtractResource();
