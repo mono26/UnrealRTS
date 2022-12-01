@@ -6,6 +6,7 @@
 #include "MovementCommand.h"
 #include "../../Component/InteractableComponent.h"
 #include "DrawDebugHelpers.h"
+#include "../UnitGathererComponent.h"
 
 UStoreCommand::UStoreCommand() : Super()
 {
@@ -21,21 +22,17 @@ void UStoreCommand::Execute()
 		return;
 	}
 
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
-	if (asWorker == nullptr) {
-		this->OnFail.ExecuteIfBound();
-		return;
-	}
-
 	UInteractableComponent* interactableComponent = this->StorageRef->FindComponentByClass<UInteractableComponent>();
 	if (interactableComponent == nullptr) {
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
 
+	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
+
 	FVector interactPosition = interactableComponent->GetClosestInteractionPositionTo(this->UnitRef);
 
-	// UE_LOG(LogTemp, Warning, TEXT("ExecuteStoreCommand"));
+	UE_LOG(LogTemp, Warning, TEXT("ExecuteStoreCommand"));
 
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(this->UnitRef);
@@ -52,16 +49,11 @@ void UStoreCommand::SetStorage(AActor* Storage)
 
 void UStoreCommand::OnReachStorage()
 {
-	// TODO extract resource
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
-	if (asWorker == nullptr) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Not a worker."));
 
-		this->OnFail.ExecuteIfBound();
-		return;
-	}
+	UUnitGathererComponent* gatherComponent = asWorker->FindComponentByClass<UUnitGathererComponent>();
 
-	asWorker->StoreResource();
+	gatherComponent->StoreResource();
 
 	this->OnSuccess.Execute();
 }

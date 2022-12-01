@@ -13,43 +13,6 @@
 #include "../Component/CommanderComponent.h"
 #include "WorkerUnit.generated.h"
 
-struct FMovementRequest
-{
-private:
-	uint32 RequestId;
-
-	FActionSignature OnSuccess;
-	FActionSignature OnFail;
-
-public:
-	FMovementRequest() : FMovementRequest(0, FActionSignature(), FActionSignature())
-	{
-
-	}
-
-	FMovementRequest(int requestId, FActionSignature OnSuccess, FActionSignature OnFail)
-	{
-		this->RequestId = requestId;
-		this->OnSuccess = OnSuccess;
-		this->OnFail = OnFail;
-	}
-
-	uint32 GetResquestId()
-	{
-		return this->RequestId;
-	}
-
-	FActionSignature GetOnSuccess()
-	{
-		return this->OnSuccess;
-	}
-
-	FActionSignature GetOnFail()
-	{
-		return this->OnFail;
-	}
-};
-
 struct FExtendedTimer
 {
 private:
@@ -85,58 +48,58 @@ public:
 	}
 };
 
-struct FGatherRequest
-{
-private:
-	AActor* ResourceRef;
-
-	FActionSignature OnSuccess;
-	FActionSignature OnFail;
-
-public:
-	FGatherRequest() : FGatherRequest(nullptr, FActionSignature(), FActionSignature())
-	{
-
-	}
-
-	FGatherRequest(AActor* Resource, FActionSignature OnSuccessCallback, FActionSignature OnFailCallback)
-	{
-		this->ResourceRef = Resource;
-
-		this->OnSuccess = OnSuccessCallback;
-		this->OnFail = OnFailCallback;
-	}
-
-	AActor* GetResourceRef() const
-	{
-		return this->ResourceRef;
-	}
-
-	FActionSignature GetOnSuccess() const
-	{
-		return this->OnSuccess;
-	}
-
-	FActionSignature GetOnFail() const
-	{
-		return this->OnFail;
-	}
-
-	void SetResourceRef(AActor* Resource)
-	{
-		this->ResourceRef = Resource;
-	}
-
-	void SetOnSuccess(FActionSignature OnSuccessCallback)
-	{
-		this->OnSuccess = OnSuccessCallback;
-	}
-
-	void SetOnFail(FActionSignature OnFailCallback)
-	{
-		this->OnFail = OnFailCallback;
-	}
-};
+//struct FGatherRequest
+//{
+//private:
+//	AActor* ResourceRef;
+//
+//	FActionSignature OnSuccess;
+//	FActionSignature OnFail;
+//
+//public:
+//	FGatherRequest() : FGatherRequest(nullptr, FActionSignature(), FActionSignature())
+//	{
+//
+//	}
+//
+//	FGatherRequest(AActor* Resource, FActionSignature OnSuccessCallback, FActionSignature OnFailCallback)
+//	{
+//		this->ResourceRef = Resource;
+//
+//		this->OnSuccess = OnSuccessCallback;
+//		this->OnFail = OnFailCallback;
+//	}
+//
+//	AActor* GetResourceRef() const
+//	{
+//		return this->ResourceRef;
+//	}
+//
+//	FActionSignature GetOnSuccess() const
+//	{
+//		return this->OnSuccess;
+//	}
+//
+//	FActionSignature GetOnFail() const
+//	{
+//		return this->OnFail;
+//	}
+//
+//	void SetResourceRef(AActor* Resource)
+//	{
+//		this->ResourceRef = Resource;
+//	}
+//
+//	void SetOnSuccess(FActionSignature OnSuccessCallback)
+//	{
+//		this->OnSuccess = OnSuccessCallback;
+//	}
+//
+//	void SetOnFail(FActionSignature OnFailCallback)
+//	{
+//		this->OnFail = OnFailCallback;
+//	}
+//};
 
 struct FAttackRequest
 {
@@ -214,8 +177,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Worker|Target")
 	FTargetChangedSignature OnTargetChangedEvent;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Worker|Gathering")
-	FResource CarriedResource;
+	//UPROPERTY(BlueprintReadOnly, Category = "Worker|Gathering")
+	//FResource CarriedResource;
 
 private:
 	bool bIsRunningCommand = false;
@@ -228,11 +191,9 @@ private:
 	FExtendedTimer* AttackTimer;
 	FActionSignature OnExecuteAttackDelegate;
 
-	TMap<uint32, FMovementRequest> MovementRequest;
-
-	FGatherRequest* GatherRequest;
-	FExtendedTimer* GatherTimer;
-	FActionSignature OnExtractResourceDelegate;
+	//FGatherRequest* GatherRequest;
+	//FExtendedTimer* GatherTimer;
+	//FActionSignature OnExtractResourceDelegate;
 
 public:
 	// Sets default values for this character's properties
@@ -263,18 +224,7 @@ public:
 	UFUNCTION()
 	void OnExecuteAttack();
 
-	UFUNCTION(BlueprintCallable, Category = "Worker|Movement")
-	void MoveToPosition(FVector Position, FActionSignature OnSuccess, FActionSignature OnFail);
-
-	UFUNCTION(BlueprintCallable, Category = "Worker|Movement")
-	void MoveToActor(AActor* ActorRef, FActionSignature OnSuccess, FActionSignature OnFail);
-
-	void OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result);
-
-	UFUNCTION(BlueprintImplementableEvent, Category = "Worker|Movement")
-	void OnStartMovement();
-
-	void ClearGatherRequest();
+	/*void ClearGatherRequest();
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Gathering")
 	AActor* GetTargetResource() const;
@@ -286,7 +236,7 @@ public:
 
 	void SetGatherRequest(FGatherRequest Request);
 
-	void StoreResource();
+	void StoreResource();*/
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Commands")
 	void ExecuteCommand(UUnitCommand* Command);

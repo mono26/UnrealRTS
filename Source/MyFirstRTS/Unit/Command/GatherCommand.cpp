@@ -6,6 +6,7 @@
 #include "MovementCommand.h"
 #include "../../Component/InteractableComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "../UnitGathererComponent.h"
 
 UGatherCommand::UGatherCommand() : Super()
 {
@@ -29,19 +30,17 @@ void UGatherCommand::Execute()
 	}
 
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
-	if (asWorker == nullptr) {
-		this->OnFail.ExecuteIfBound();
-		return;
-	}
+
+	UUnitGathererComponent* gatherComponent = asWorker->FindComponentByClass<UUnitGathererComponent>();
 
 	FGatherRequest gatherRequest = FGatherRequest(this->ResourceRef, this->OnSuccess, this->OnFail);
-	asWorker->SetGatherRequest(gatherRequest);
+	gatherComponent->SetGatherRequest(gatherRequest);
 
 	UE_LOG(LogTemp, Warning, TEXT("ExecuteGatherCommand"));
 
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(this->UnitRef);
-	movementCommmand->SetTargetPosition(asWorker->GetTargetResource()->GetActorLocation());
+	movementCommmand->SetTargetPosition(gatherComponent->GetTargetResource()->GetActorLocation());
 	movementCommmand->SetOnSuccess(this->OnReachResourceDelegate);
 	movementCommmand->SetOnFail(this->OnFail);
 	asWorker->ExecuteCommand(movementCommmand);
@@ -55,23 +54,21 @@ void UGatherCommand::SetResource(AActor* Resource)
 void UGatherCommand::OnReachResource()
 {
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
-	if (asWorker == nullptr) {
-		this->OnFail.ExecuteIfBound();
-		return;
-	}
 
-	if (asWorker->GetTargetResource() == nullptr) {
+	UUnitGathererComponent* gatherComponent = asWorker->FindComponentByClass<UUnitGathererComponent>();
+
+	if (gatherComponent->GetTargetResource() == nullptr) {
 		UE_LOG(LogTemp, Warning, TEXT("No target resource."));
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
 
 	FVector currentLocation = asWorker->GetActorLocation();
-	FVector resourceLocation = asWorker->GetTargetResource()->GetActorLocation();
+	FVector resourceLocation = gatherComponent->GetTargetResource()->GetActorLocation();
 	resourceLocation.Z = currentLocation.Z;
 
 	FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(currentLocation, resourceLocation);
 	asWorker->SetActorRotation(lookAtRotation);
 
-	asWorker->ExtractResource();
+	gatherComponent->ExtractResource();
 }

@@ -2,6 +2,7 @@
 
 #include "MovementCommand.h"
 #include "../WorkerUnit.h"
+#include "../UnitMovementComponent.h"
 
 UMovementCommand::UMovementCommand() : Super()
 {
@@ -23,15 +24,15 @@ void UMovementCommand::Execute()
 		return;
 	}
 
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
-	if (asWorker == nullptr) {
+	UUnitMovementComponent* movementComponent = this->UnitRef->FindComponentByClass<UUnitMovementComponent>();
+	if (movementComponent == nullptr) {
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("ExecuteMovementCommand"));
 
-	asWorker->MoveToPosition(this->TargetPosition, this->OnReachedPositionDelegate, this->OnReachPositionFailDelegate);
+	movementComponent->MoveToPosition(this->TargetPosition, this->OnReachedPositionDelegate, this->OnReachPositionFailDelegate);
 }
 
 void UMovementCommand::OnReachTargetPosition()
