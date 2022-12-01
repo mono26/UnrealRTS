@@ -2,6 +2,8 @@
 
 
 #include "UnitComponent.h"
+#include "../Component/InteractableComponent.h"
+#include "../Component/HealthComponent.h"
 
 // Sets default values for this component's properties
 UUnitComponent::UUnitComponent()
@@ -21,7 +23,11 @@ void UUnitComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+	UInteractableComponent* interactableComponent = this->GetOwner()->FindComponentByClass<UInteractableComponent>();
+	interactableComponent->SetInteractableRadius(this->UnitSize);
 	
+	UHealthComponent* healthComponent = this->GetOwner()->FindComponentByClass<UHealthComponent>();
+	healthComponent->InitializeHealthValues(this->HealthMax);
 }
 
 

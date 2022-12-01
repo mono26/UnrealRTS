@@ -93,7 +93,7 @@ private:
 	FActionSignature OnFail;
 
 public:
-	FGatherRequest()
+	FGatherRequest() : FGatherRequest(nullptr, FActionSignature(), FActionSignature())
 	{
 
 	}
@@ -106,26 +106,41 @@ public:
 		this->OnFail = OnFailCallback;
 	}
 
-	AActor* GetResourceRef()
+	AActor* GetResourceRef() const
 	{
 		return this->ResourceRef;
 	}
 
-	FActionSignature GetOnSuccess()
+	FActionSignature GetOnSuccess() const
 	{
 		return this->OnSuccess;
 	}
 
-	FActionSignature GetOnFail()
+	FActionSignature GetOnFail() const
 	{
 		return this->OnFail;
+	}
+
+	void SetResourceRef(AActor* Resource)
+	{
+		this->ResourceRef = Resource;
+	}
+
+	void SetOnSuccess(FActionSignature OnSuccessCallback)
+	{
+		this->OnSuccess = OnSuccessCallback;
+	}
+
+	void SetOnFail(FActionSignature OnFailCallback)
+	{
+		this->OnFail = OnFailCallback;
 	}
 };
 
 struct FAttackRequest
 {
 private:
-	float RangeToTarget;
+	float DistanceToTarget;
 
 	AActor* AttackTargetRef;
 
@@ -133,7 +148,7 @@ private:
 	FActionSignature OnFail;
 
 public:
-	FAttackRequest()
+	FAttackRequest() : FAttackRequest(nullptr, FActionSignature(), FActionSignature())
 	{
 
 	}
@@ -146,29 +161,44 @@ public:
 		this->OnFail = OnFailCallback;
 	}
 
-	AActor* GetAttackTargetRef()
+	AActor* GetAttackTargetRef() const
 	{
 		return this->AttackTargetRef;
 	}
 
-	FActionSignature GetOnSuccess()
+	FActionSignature GetOnSuccess() const
 	{
 		return this->OnSuccess;
 	}
 
-	FActionSignature GetOnFail()
+	FActionSignature GetOnFail() const
 	{
 		return this->OnFail;
 	}
 
-	float GetRangeToTarget()
+	float GetDistanceToTarget() const
 	{
-		return this->RangeToTarget;
+		return this->DistanceToTarget;
 	}
 
-	void SetRangeToTarget(float Range)
+	void SetDistanceToTarget(float Distance)
 	{
-		this->RangeToTarget = Range;
+		this->DistanceToTarget = Distance;
+	}
+
+	void SetAttackTargetRef(AActor* AttackTarget)
+	{
+		this->AttackTargetRef = AttackTarget;
+	}
+
+	void SetOnSuccess(FActionSignature OnSuccessCallback)
+	{
+		this->OnSuccess = OnSuccessCallback;
+	}
+
+	void SetOnFail(FActionSignature OnFailCallback)
+	{
+		this->OnFail = OnFailCallback;
 	}
 };
 
@@ -191,13 +221,13 @@ private:
 
 	UUnitComponent* UnitComponent = nullptr;
 
-	FAttackRequest AttackRequest;
+	FAttackRequest* AttackRequest;
 	FExtendedTimer* AttackTimer;
 	FActionSignature OnExecuteAttackDelegate;
 
 	TMap<uint32, FMovementRequest> MovementRequest;
 
-	FGatherRequest GatherRequest;
+	FGatherRequest* GatherRequest;
 	FExtendedTimer* GatherTimer;
 	FActionSignature OnExtractResourceDelegate;
 
@@ -220,7 +250,10 @@ public:
 	void ExecuteAttack();
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Attack")
-	AActor* GetAttackTarget();
+	void ClearAttackRequest();
+
+	UFUNCTION(BlueprintCallable, Category = "Worker|Attack")
+	AActor* GetAttackTarget() const;
 
 	void SetAttackRequest(FAttackRequest Request);
 
@@ -239,7 +272,7 @@ public:
 	void OnStartMovement();
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Gathering")
-	AActor* GetTargetResource();
+	AActor* GetTargetResource() const;
 
 	void ExtractResource();
 

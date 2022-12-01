@@ -14,8 +14,10 @@ AWorkerUnit::AWorkerUnit()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	this->GatherRequest = new FGatherRequest();
 	this->GatherTimer = nullptr;
 
+	this->AttackRequest = new FAttackRequest();
 	this->AttackTimer = nullptr;
 
 	this->OnExtractResourceDelegate.BindUFunction(this, FName("OnExtractResource"));
@@ -58,34 +60,61 @@ void AWorkerUnit::ExecuteAttack()
 		return;
 	}
 
-	this->AttackTimer = new FExtendedTimer(&this->GetWorld()->GetTimerManager(), this->UnitComponent->AttackSwingDuration, this->OnExecuteAttackDelegate, this->AttackRequest.GetOnFail());
+	this->AttackRequest->SetDistanceToTarget(FVector::DistSquared(this->GetActorLocation(), this->GetAttackTarget()->GetActorLocation()));
+
+	this->AttackTimer = new FExtendedTimer(&this->GetWorld()->GetTimerManager(), this->UnitComponent->AttackSwingDuration, this->OnExecuteAttackDelegate, this->AttackRequest->GetOnFail());
 
 	this->UnitComponent->SetCurrentState(EUnitStates::Attacking);
 }
 
-AActor* AWorkerUnit::GetAttackTarget()
+void AWorkerUnit::ClearAttackRequest()
 {
-	return this->AttackRequest.GetAttackTargetRef();
+	UE_LOG(LogTemp, Warning, TEXT("Clear attack request."));
+
+	this->SetAttackRequest(FAttackRequest());
+
+	this->AttackTimer->Stop();
+}
+
+AActor* AWorkerUnit::GetAttackTarget() const
+{
+	return this->AttackRequest->GetAttackTargetRef();
 }
 
 void AWorkerUnit::OnExecuteAttack()
 {
 	AActor* target = this->GetAttackTarget();
 	if (target == nullptr) {
-		this->AttackRequest.GetOnFail().ExecuteIfBound();
+		this->AttackRequest->GetOnFail().ExecuteIfBound();
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Attacking %s."), *target->GetName());
+	float currentDistance = FVector::DistSquared(this->GetActorLocation(), this->GetAttackTarget()->GetActorLocation());
+	if (this->AttackRequest->GetDistanceToTarget() > currentDistance) {
+		this->AttackRequest->GetOnFail().ExecuteIfBound();
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Deal damage to %s."), *target->GetName());
 
 	UGameplayStatics::ApplyDamage(target, this->UnitComponent->AttackDamage, this->GetController(), this, nullptr);
 
-	this->AttackRequest.GetOnSuccess().ExecuteIfBound();
+	this->AttackRequest->GetOnSuccess().ExecuteIfBound();
 }
 
 void AWorkerUnit::SetAttackRequest(FAttackRequest Request)
 {
-	this->AttackRequest = Request;
+	UE_LOG(LogTemp, Warning, TEXT("SetAttackRequest"));
+
+	AActor* oldTarget = this->GetAttackTarget();
+
+	this->AttackRequest->SetAttackTargetRef(Request.GetAttackTargetRef());
+	this->AttackRequest->SetOnSuccess(Request.GetOnSuccess());
+	this->AttackRequest->SetOnFail(Request.GetOnFail());
+
+	if (this->OnTargetChangedEvent.IsBound()) {
+		this->OnTargetChangedEvent.Broadcast(oldTarget, this->GetAttackTarget());
+	}
 }
 
 void AWorkerUnit::MoveToPosition(FVector Position, FActionSignature OnSuccess, FActionSignature OnFail)
@@ -154,41 +183,43 @@ void AWorkerUnit::OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFoll
 	// delete request;
 }
 
-AActor* AWorkerUnit::GetTargetResource()
+AActor* AWorkerUnit::GetTargetResource() const
 {
-	return this->GatherRequest.GetResourceRef();
+	return this->GatherRequest->GetResourceRef();
 }
 
 void AWorkerUnit::SetGatherRequest(FGatherRequest Request)
 {
-	this->GatherRequest = Request;
+	this->GatherRequest->SetResourceRef(Request.GetResourceRef());
+	this->GatherRequest->SetOnSuccess(Request.GetOnSuccess());
+	this->GatherRequest->SetOnFail(Request.GetOnFail());
 }
 
 void AWorkerUnit::ExtractResource()
 {
 	if (this->GetTargetResource() == nullptr) {
-		this->GatherRequest.GetOnFail().ExecuteIfBound();
+		this->GatherRequest->GetOnFail().ExecuteIfBound();
 		return;
 	}
 
-	UResourceComponent* resourceComponent = this->GatherRequest.GetResourceRef()->FindComponentByClass<UResourceComponent>();
+	UResourceComponent* resourceComponent = this->GatherRequest->GetResourceRef()->FindComponentByClass<UResourceComponent>();
 	if (resourceComponent == nullptr) {
-		this->GatherRequest.GetOnFail().ExecuteIfBound();
+		this->GatherRequest->GetOnFail().ExecuteIfBound();
 		return;
 	}
 
 	if (this->CarriedResource.ResourceType == resourceComponent->ResourceType) {
 		UE_LOG(LogTemp, Warning, TEXT("Already have this resource."));
-		this->GatherRequest.GetOnSuccess().ExecuteIfBound();
+		this->GatherRequest->GetOnSuccess().ExecuteIfBound();
 		return;
 	}
 
 	if (!resourceComponent->CanGather()) {
-		this->GatherRequest.GetOnFail().ExecuteIfBound();
+		this->GatherRequest->GetOnFail().ExecuteIfBound();
 		return;
 	}
 
-	this->GatherTimer = new FExtendedTimer(&this->GetWorld()->GetTimerManager(), 3.0f, this->OnExtractResourceDelegate, this->GatherRequest.GetOnFail());
+	this->GatherTimer = new FExtendedTimer(&this->GetWorld()->GetTimerManager(), 3.0f, this->OnExtractResourceDelegate, this->GatherRequest->GetOnFail());
 
 	this->UnitComponent->SetCurrentState(EUnitStates::Gathering);
 }
@@ -196,19 +227,19 @@ void AWorkerUnit::ExtractResource()
 void AWorkerUnit::OnExtractResource()
 {
 	if (this->GetTargetResource()) {
-		this->GatherRequest.GetOnFail().ExecuteIfBound();
+		this->GatherRequest->GetOnFail().ExecuteIfBound();
 		return;
 	}
 
-	UResourceComponent* resourceComponent = this->GatherRequest.GetResourceRef()->FindComponentByClass<UResourceComponent>();
+	UResourceComponent* resourceComponent = this->GatherRequest->GetResourceRef()->FindComponentByClass<UResourceComponent>();
 	if (resourceComponent == nullptr) {
-		this->GatherRequest.GetOnFail().ExecuteIfBound();
+		this->GatherRequest->GetOnFail().ExecuteIfBound();
 		return;
 	}
 
 	this->CarriedResource = resourceComponent->GetGatheredResource();
 
-	this->GatherRequest.GetOnSuccess().ExecuteIfBound();
+	this->GatherRequest->GetOnSuccess().ExecuteIfBound();
 }
 
 void AWorkerUnit::StoreResource()
@@ -226,14 +257,6 @@ void AWorkerUnit::StoreResource()
 void AWorkerUnit::ExecuteCommand(UUnitCommand* Command)
 {
 	this->bIsRunningCommand = true;
-
-	//if (this->GatherTimer != nullptr) {
-	//	FExtendedTimer* timer = this->GatherTimer;
-	//	this->GatherTimer = nullptr;
-	//	timer->Stop();
-	//}
-
-	//this->SetAttackTarget(nullptr);
 
 	Command->Execute();
 }

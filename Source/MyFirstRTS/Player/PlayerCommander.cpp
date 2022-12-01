@@ -36,7 +36,7 @@ AActor* APlayerCommander::GetPlayerTownhall()
 	return rtsMode->GetPlayerTownhall();
 }
 
-TMap<EResourceType, int> APlayerCommander::GetStoredResources()
+TMap<EResourceType, int> APlayerCommander::GetStoredResources() const
 {
 	return this->StoredResources;
 }

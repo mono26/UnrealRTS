@@ -31,17 +31,10 @@ public:
 
 	// TODO move current health to it's own component.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Health")
-	float HealthCurrent;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Health")
-	float HealthMax;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Health")
-	FVector HealthBarLocalPos;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Health")
-	FVector2D HealthBarSize;
+	int HealthMax;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Attack")
-	float AttackDamage;
+	int AttackDamage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Attack")
 	float AttackRange;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Attack")

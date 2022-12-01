@@ -15,19 +15,7 @@ class MYFIRSTRTS_API UBuildingComponent : public UActorComponent
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building|Health")
-	float HealthCurrent;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building|Health")
 	float HealthMax;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building|Health")
-	FVector HealthBarLocalPos;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building|Health")
-	FVector2D HealthBarSize;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building|Attack")
-	float AttackDamage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building|Attack")
-	float AttackRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building")
 	FVector BuildingCenter;

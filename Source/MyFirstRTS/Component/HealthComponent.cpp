@@ -32,15 +32,34 @@ void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-void UHealthComponent::GetCurrentHealth()
+int UHealthComponent::GetHealthCurrent() const
 {
+	return this->HealthCurrent;
 }
 
-void UHealthComponent::GetMaxHealth()
+int UHealthComponent::GetMaxHealth() const
 {
+	return this->HealthMax;
 }
 
-void UHealthComponent::OnDamage(float DamageTake)
+void UHealthComponent::InitializeHealthValues(int HealthValue)
 {
+	this->HealthCurrent = this->HealthMax = HealthValue;
+
+	this->UpdateHealthBar();
+}
+
+void UHealthComponent::OnDamage(int DamageTaken)
+{
+	int currentHealth = this->HealthCurrent;
+	currentHealth -= DamageTaken;
+	currentHealth = FMath::Max(currentHealth, 0.0f);
+
+	this->HealthCurrent = currentHealth;
+
+	if (this->HealthCurrent <= 0 && this->OnHealthZero.IsBound()) {
+		UE_LOG(LogTemp, Warning, TEXT("OnHealthZero."));
+		this->OnHealthZero.Broadcast();
+	}
 }
 

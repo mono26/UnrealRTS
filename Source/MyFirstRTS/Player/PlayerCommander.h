@@ -33,7 +33,7 @@ public:
 	AActor* GetPlayerTownhall();
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Resources")
-	TMap<EResourceType, int> GetStoredResources();
+	TMap<EResourceType, int> GetStoredResources() const;
 
 	void ReceiveResources(EResourceType ResourceType, int ResourceAmount);
 

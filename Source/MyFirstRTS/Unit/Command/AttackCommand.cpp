@@ -5,6 +5,7 @@
 #include "../WorkerUnit.h"
 #include "MovementCommand.h"
 #include "../../Component/InteractableComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 UAttackCommand::UAttackCommand() : Super()
 {
@@ -45,6 +46,8 @@ void UAttackCommand::Execute()
 		return;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("ExecuteAttackCommand"));
+
 	FVector interactPosition = interactableComponent->GetClosestInteractionPositionTo(this->UnitRef);
 
 	// TODO move to target
@@ -69,10 +72,18 @@ void UAttackCommand::OnReachAttackTarget()
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
 	if (asWorker == nullptr) {
 		UE_LOG(LogTemp, Warning, TEXT("Not a worker."));
-
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
+
+	if (asWorker->GetAttackTarget() == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("No attack target."));
+		this->OnFail.ExecuteIfBound();
+		return;
+	}
+
+	FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(asWorker->GetActorLocation(), asWorker->GetAttackTarget()->GetActorLocation());
+	asWorker->SetActorRotation(lookAtRotation);
 
 	asWorker->ExecuteAttack();
 }

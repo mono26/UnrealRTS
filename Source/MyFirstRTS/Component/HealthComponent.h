@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "../Unit/Command/UnitCommand.h"
+#include "../Resource/ResourceComponent.h"
 #include "HealthComponent.generated.h"
-
 
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MYFIRSTRTS_API UHealthComponent : public UActorComponent
@@ -13,14 +14,17 @@ class MYFIRSTRTS_API UHealthComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building|Health")
+	UPROPERTY(BlueprintAssignable, Category = "Health")
+	FMulticastActionSignature OnHealthZero;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
 	FVector HealthBarLocalPos;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building|Health")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
 	FVector2D HealthBarSize;
 
 private:
-	float HealthCurrent;
-	float HealthMax;
+	int HealthCurrent;
+	int HealthMax;
 
 public:	
 	// Sets default values for this component's properties
@@ -36,14 +40,16 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	void GetCurrentHealth();
+	int GetHealthCurrent() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	void GetMaxHealth();
+	int GetMaxHealth() const;
+
+	void InitializeHealthValues(int HealthValue);
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	void OnDamage(float DamageTake);
+	void OnDamage(int DamageTaken);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Health")
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Health")
 	void UpdateHealthBar();
 };

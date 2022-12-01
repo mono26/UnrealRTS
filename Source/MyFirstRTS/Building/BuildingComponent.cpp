@@ -3,6 +3,7 @@
 
 #include "BuildingComponent.h"
 #include "../Component/InteractableComponent.h"
+#include "../Component/HealthComponent.h"
 
 // Sets default values for this component's properties
 UBuildingComponent::UBuildingComponent()
@@ -23,6 +24,9 @@ void UBuildingComponent::BeginPlay()
 	// ...
 	UInteractableComponent* interactableComponent = this->GetOwner()->FindComponentByClass<UInteractableComponent>();
 	interactableComponent->SetInteractableRadius(this->BuildingSize);
+
+	UHealthComponent* healthComponent = this->GetOwner()->FindComponentByClass<UHealthComponent>();
+	healthComponent->InitializeHealthValues(this->HealthMax);
 }
 
 
