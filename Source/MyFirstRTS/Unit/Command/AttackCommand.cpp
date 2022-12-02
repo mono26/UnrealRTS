@@ -6,6 +6,7 @@
 #include "MovementCommand.h"
 #include "../../Component/InteractableComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "../UnitAttackComponent.h"
 
 UAttackCommand::UAttackCommand() : Super()
 {
@@ -17,6 +18,7 @@ UAttackCommand::UAttackCommand() : Super()
 void UAttackCommand::Execute()
 {
 	if (this->AttackTargetRef == nullptr || this->UnitRef == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("Invalid data for attack."));
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
@@ -29,14 +31,11 @@ void UAttackCommand::Execute()
 	}
 
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
-	if (asWorker == nullptr) {
-		UE_LOG(LogTemp, Warning, TEXT("Not a worker."));
-		this->OnFail.ExecuteIfBound();
-		return;
-	}
+
+	UUnitAttackComponent* attackComponent = asWorker->FindComponentByClass<UUnitAttackComponent>();
 
 	FAttackRequest request = FAttackRequest(this->AttackTargetRef, this->OnSuccess, this->OnFail);
-	asWorker->SetAttackRequest(request);
+	attackComponent->SetAttackRequest(request);
 
 	UE_LOG(LogTemp, Warning, TEXT("ExecuteAttackCommand"));
 
@@ -57,27 +56,22 @@ void UAttackCommand::SetAttackTarget(AActor* AttackTarget)
 
 void UAttackCommand::OnReachAttackTarget()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnReachAttackTarget"));
-
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
-	if (asWorker == nullptr) {
-		UE_LOG(LogTemp, Warning, TEXT("Not a worker."));
-		this->OnFail.ExecuteIfBound();
-		return;
-	}
 
-	if (asWorker->GetAttackTarget() == nullptr) {
+	UUnitAttackComponent* attackComponent = asWorker->FindComponentByClass<UUnitAttackComponent>();
+
+	if (attackComponent->GetAttackTarget() == nullptr) {
 		UE_LOG(LogTemp, Warning, TEXT("No attack target."));
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
 
 	FVector currentLocation = asWorker->GetActorLocation();
-	FVector targetLocation = asWorker->GetAttackTarget()->GetActorLocation();
+	FVector targetLocation = attackComponent->GetAttackTarget()->GetActorLocation();
 	targetLocation.Z = currentLocation.Z;
 
 	FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(currentLocation, targetLocation);
 	asWorker->SetActorRotation(lookAtRotation);
 
-	asWorker->ExecuteAttack();
+	attackComponent->ExecuteAttack();
 }

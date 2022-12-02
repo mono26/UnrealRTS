@@ -20,12 +20,14 @@ void UMovementCommand::SetTargetPosition(FVector Position)
 void UMovementCommand::Execute()
 {
 	if (this->UnitRef == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("Invalid data."));
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
 
 	UUnitMovementComponent* movementComponent = this->UnitRef->FindComponentByClass<UUnitMovementComponent>();
 	if (movementComponent == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("No movement components."));
 		this->OnFail.ExecuteIfBound();
 		return;
 	}

@@ -48,31 +48,33 @@ public:
 	}
 };
 
-//struct FGatherRequest
+//struct FAttackRequest
 //{
 //private:
-//	AActor* ResourceRef;
+//	float DistanceToTarget;
+//
+//	AActor* AttackTargetRef;
 //
 //	FActionSignature OnSuccess;
 //	FActionSignature OnFail;
 //
 //public:
-//	FGatherRequest() : FGatherRequest(nullptr, FActionSignature(), FActionSignature())
+//	FAttackRequest() : FAttackRequest(nullptr, FActionSignature(), FActionSignature())
 //	{
 //
 //	}
 //
-//	FGatherRequest(AActor* Resource, FActionSignature OnSuccessCallback, FActionSignature OnFailCallback)
+//	FAttackRequest(AActor* AttackTarget, FActionSignature OnSuccessCallback, FActionSignature OnFailCallback)
 //	{
-//		this->ResourceRef = Resource;
+//		this->AttackTargetRef = AttackTarget;
 //
 //		this->OnSuccess = OnSuccessCallback;
 //		this->OnFail = OnFailCallback;
 //	}
 //
-//	AActor* GetResourceRef() const
+//	AActor* GetAttackTargetRef() const
 //	{
-//		return this->ResourceRef;
+//		return this->AttackTargetRef;
 //	}
 //
 //	FActionSignature GetOnSuccess() const
@@ -85,9 +87,19 @@ public:
 //		return this->OnFail;
 //	}
 //
-//	void SetResourceRef(AActor* Resource)
+//	float GetDistanceToTarget() const
 //	{
-//		this->ResourceRef = Resource;
+//		return this->DistanceToTarget;
+//	}
+//
+//	void SetDistanceToTarget(float Distance)
+//	{
+//		this->DistanceToTarget = Distance;
+//	}
+//
+//	void SetAttackTargetRef(AActor* AttackTarget)
+//	{
+//		this->AttackTargetRef = AttackTarget;
 //	}
 //
 //	void SetOnSuccess(FActionSignature OnSuccessCallback)
@@ -101,84 +113,12 @@ public:
 //	}
 //};
 
-struct FAttackRequest
-{
-private:
-	float DistanceToTarget;
-
-	AActor* AttackTargetRef;
-
-	FActionSignature OnSuccess;
-	FActionSignature OnFail;
-
-public:
-	FAttackRequest() : FAttackRequest(nullptr, FActionSignature(), FActionSignature())
-	{
-
-	}
-
-	FAttackRequest(AActor* AttackTarget, FActionSignature OnSuccessCallback, FActionSignature OnFailCallback)
-	{
-		this->AttackTargetRef = AttackTarget;
-
-		this->OnSuccess = OnSuccessCallback;
-		this->OnFail = OnFailCallback;
-	}
-
-	AActor* GetAttackTargetRef() const
-	{
-		return this->AttackTargetRef;
-	}
-
-	FActionSignature GetOnSuccess() const
-	{
-		return this->OnSuccess;
-	}
-
-	FActionSignature GetOnFail() const
-	{
-		return this->OnFail;
-	}
-
-	float GetDistanceToTarget() const
-	{
-		return this->DistanceToTarget;
-	}
-
-	void SetDistanceToTarget(float Distance)
-	{
-		this->DistanceToTarget = Distance;
-	}
-
-	void SetAttackTargetRef(AActor* AttackTarget)
-	{
-		this->AttackTargetRef = AttackTarget;
-	}
-
-	void SetOnSuccess(FActionSignature OnSuccessCallback)
-	{
-		this->OnSuccess = OnSuccessCallback;
-	}
-
-	void SetOnFail(FActionSignature OnFailCallback)
-	{
-		this->OnFail = OnFailCallback;
-	}
-};
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTargetChangedSignature, const AActor*, OldTarget, const AActor*, NewTarget);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTargetChangedSignature, const AActor*, OldTarget, const AActor*, NewTarget);
 
 UCLASS()
 class MYFIRSTRTS_API AWorkerUnit : public ACharacter
 {
 	GENERATED_BODY()
-
-public:
-	UPROPERTY(BlueprintAssignable, Category = "Worker|Target")
-	FTargetChangedSignature OnTargetChangedEvent;
-
-	//UPROPERTY(BlueprintReadOnly, Category = "Worker|Gathering")
-	//FResource CarriedResource;
 
 private:
 	bool bIsRunningCommand = false;
@@ -186,14 +126,6 @@ private:
 	UCommanderComponent* OwnerCommander = nullptr;
 
 	UUnitComponent* UnitComponent = nullptr;
-
-	FAttackRequest* AttackRequest;
-	FExtendedTimer* AttackTimer;
-	FActionSignature OnExecuteAttackDelegate;
-
-	//FGatherRequest* GatherRequest;
-	//FExtendedTimer* GatherTimer;
-	//FActionSignature OnExtractResourceDelegate;
 
 public:
 	// Sets default values for this character's properties
@@ -211,38 +143,15 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
-	void ExecuteAttack();
-
-	UFUNCTION(BlueprintCallable, Category = "Worker|Attack")
-	void ClearAttackRequest();
-
-	UFUNCTION(BlueprintCallable, Category = "Worker|Attack")
-	AActor* GetAttackTarget() const;
-
-	void SetAttackRequest(FAttackRequest Request);
-
-	UFUNCTION()
-	void OnExecuteAttack();
-
-	/*void ClearGatherRequest();
-
-	UFUNCTION(BlueprintCallable, Category = "Worker|Gathering")
-	AActor* GetTargetResource() const;
-
-	void ExtractResource();
-
-	UFUNCTION()
-	void OnExtractResource();
-
-	void SetGatherRequest(FGatherRequest Request);
-
-	void StoreResource();*/
-
 	UFUNCTION(BlueprintCallable, Category = "Worker|Commands")
 	void ExecuteCommand(UUnitCommand* Command);
 
 	UFUNCTION(BlueprintCallable, Category = "Worker|Commands")
 	bool GetIsRunningCommand();
+
+	UUnitComponent* GetUnitComponent() const;
+
+	UCommanderComponent* GetOwnerCommander() const;
 
 	void SetOwnerCommander(UCommanderComponent* Commander);
 

@@ -10,6 +10,7 @@
 #include "../Building/BuildingComponent.h"
 #include "../Component/TeamComponent.h"
 #include "../Game/MyFirstRTSGameMode.h"
+#include "UnitAttackComponent.h"
 
 // Sets default values for this component's properties
 UWorkerUnitBrain::UWorkerUnitBrain()
@@ -98,7 +99,7 @@ void UWorkerUnitBrain::OnSightUpdated(AActor* Instigator)
 		return;
 	}
 
-	AActor* currentTarget = asWorker->GetAttackTarget();
+	AActor* currentTarget = asWorker->FindComponentByClass<UUnitAttackComponent>()->GetAttackTarget();
 	//if (currentTarget == nullptr) {
 	//	asWorker->SetAttackTarget(Instigator);
 	//	return;

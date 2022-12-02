@@ -49,7 +49,7 @@ void UUnitGathererComponent::ClearGatherRequest()
 
 AActor* UUnitGathererComponent::GetTargetResource() const
 {
-	return this->GatherRequest->GetResourceRef();
+	return this->GatherRequest != nullptr ? this->GatherRequest->GetResourceRef() : nullptr;
 }
 
 void UUnitGathererComponent::SetGatherRequest(FGatherRequest Request)
