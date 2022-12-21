@@ -40,10 +40,14 @@ void UUnitGathererComponent::ClearGatherRequest()
 {
 	this->SetGatherRequest(FGatherRequest());
 
+	UE_LOG(LogTemp, Warning, TEXT("Clear attack request."));
+
 	if (this->GatherTimer != nullptr) {
-		FExtendedTimer* timer = this->GatherTimer;
+		FExtendedTimer timer = *this->GatherTimer;
+
 		this->GatherTimer = nullptr;
-		timer->Stop();
+
+		timer.Stop();
 	}
 }
 

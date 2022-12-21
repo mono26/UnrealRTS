@@ -25,7 +25,7 @@ void UUnitAttackComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+
 }
 
 // Called every frame
@@ -62,9 +62,11 @@ void UUnitAttackComponent::ClearAttackRequest()
 	this->SetAttackRequest(FAttackRequest());
 
 	if (this->AttackTimer != nullptr) {
-		FExtendedTimer* timer = this->AttackTimer;
+		FExtendedTimer timer = *this->AttackTimer;
+
 		this->AttackTimer = nullptr;
-		timer->Stop();
+
+		timer.Stop();
 	}
 }
 

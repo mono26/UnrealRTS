@@ -41,79 +41,17 @@ public:
 			}, Time, false);
 	}
 
+	~FExtendedTimer()
+	{
+		this->TimerManager = nullptr;
+	}
+
 	void Stop()
 	{
 		this->TimerManager->ClearTimer(this->TimerHandle);
 		this->OnFail.ExecuteIfBound();
 	}
 };
-
-//struct FAttackRequest
-//{
-//private:
-//	float DistanceToTarget;
-//
-//	AActor* AttackTargetRef;
-//
-//	FActionSignature OnSuccess;
-//	FActionSignature OnFail;
-//
-//public:
-//	FAttackRequest() : FAttackRequest(nullptr, FActionSignature(), FActionSignature())
-//	{
-//
-//	}
-//
-//	FAttackRequest(AActor* AttackTarget, FActionSignature OnSuccessCallback, FActionSignature OnFailCallback)
-//	{
-//		this->AttackTargetRef = AttackTarget;
-//
-//		this->OnSuccess = OnSuccessCallback;
-//		this->OnFail = OnFailCallback;
-//	}
-//
-//	AActor* GetAttackTargetRef() const
-//	{
-//		return this->AttackTargetRef;
-//	}
-//
-//	FActionSignature GetOnSuccess() const
-//	{
-//		return this->OnSuccess;
-//	}
-//
-//	FActionSignature GetOnFail() const
-//	{
-//		return this->OnFail;
-//	}
-//
-//	float GetDistanceToTarget() const
-//	{
-//		return this->DistanceToTarget;
-//	}
-//
-//	void SetDistanceToTarget(float Distance)
-//	{
-//		this->DistanceToTarget = Distance;
-//	}
-//
-//	void SetAttackTargetRef(AActor* AttackTarget)
-//	{
-//		this->AttackTargetRef = AttackTarget;
-//	}
-//
-//	void SetOnSuccess(FActionSignature OnSuccessCallback)
-//	{
-//		this->OnSuccess = OnSuccessCallback;
-//	}
-//
-//	void SetOnFail(FActionSignature OnFailCallback)
-//	{
-//		this->OnFail = OnFailCallback;
-//	}
-//};
-
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTargetChangedSignature, const AActor*, OldTarget, const AActor*, NewTarget);
 
 UCLASS()
 class MYFIRSTRTS_API AWorkerUnit : public ACharacter

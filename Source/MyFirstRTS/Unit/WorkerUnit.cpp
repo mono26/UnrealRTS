@@ -68,8 +68,10 @@ void AWorkerUnit::SetOwnerCommander(UCommanderComponent* Commander)
 
 void AWorkerUnit::StopAllActions()
 {
-	//this->GetOwner()->FindComponentByClass<UUnitAttackComponent>()->ClearAttackRequest();
-	//this->GetOwner()->FindComponentByClass<UUnitGathererComponent>()->ClearGatherRequest();
+	UE_LOG(LogTemp, Warning, TEXT("StopAllActions"));
+
+	this->FindComponentByClass<UUnitAttackComponent>()->ClearAttackRequest();
+	this->FindComponentByClass<UUnitGathererComponent>()->ClearGatherRequest();
 
 	AAIController* controller = Cast<AAIController>(this->GetController());
 	controller->StopMovement();
