@@ -57,7 +57,7 @@ void UUnitAttackComponent::ExecuteAttack()
 
 void UUnitAttackComponent::ClearAttackRequest()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Clear attack request."));
+	UE_LOG(LogTemp, Warning, TEXT("ClearAttackRequest."));
 
 	this->SetAttackRequest(FAttackRequest());
 
@@ -88,11 +88,11 @@ void UUnitAttackComponent::OnExecuteAttack()
 	float currentDistance = FVector::DistSquared(this->GetOwner()->GetActorLocation(), this->GetAttackTarget()->GetActorLocation());
 	if (this->AttackRequest->GetDistanceToTarget() > currentDistance) {
 		UE_LOG(LogTemp, Warning, TEXT("Not in range to deal damage."), *target->GetName());
+
 		asWorker->GetOwnerCommander()->ExecuteAttackCommand(this->GetAttackTarget(), asWorker, this->AttackRequest->GetOnSuccess(), this->AttackRequest->GetOnFail());
+
 		return;
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Deal damage to %s."), *target->GetName());
 
 	UGameplayStatics::ApplyDamage(target, asWorker->GetUnitComponent()->AttackDamage, asWorker->GetController(), asWorker, nullptr);
 
@@ -101,8 +101,6 @@ void UUnitAttackComponent::OnExecuteAttack()
 
 void UUnitAttackComponent::SetAttackRequest(FAttackRequest Request)
 {
-	UE_LOG(LogTemp, Warning, TEXT("SetAttackRequest"));
-
 	AActor* oldTarget = this->GetAttackTarget();
 
 	this->AttackRequest->SetAttackTargetRef(Request.GetAttackTargetRef());

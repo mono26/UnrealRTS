@@ -40,4 +40,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Command")
 	void ExecuteStoreCommand(AActor* Storage, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail);
+
+	void OnExecuteMoveSuccess();
+
+	void OnExecuteMoveFail();
 };

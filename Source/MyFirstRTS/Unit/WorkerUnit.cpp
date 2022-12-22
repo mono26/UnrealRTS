@@ -68,8 +68,6 @@ void AWorkerUnit::SetOwnerCommander(UCommanderComponent* Commander)
 
 void AWorkerUnit::StopAllActions()
 {
-	UE_LOG(LogTemp, Warning, TEXT("StopAllActions"));
-
 	this->FindComponentByClass<UUnitAttackComponent>()->ClearAttackRequest();
 	this->FindComponentByClass<UUnitGathererComponent>()->ClearGatherRequest();
 

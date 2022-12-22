@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "UnitCommand.generated.h"
 
+/* https://benui.ca/unreal/delegates-advanced/#events */
 DECLARE_DYNAMIC_DELEGATE(FActionSignature);
 
 /**
