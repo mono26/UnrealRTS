@@ -89,8 +89,10 @@ public:
 
 	UUnitComponent* GetUnitComponent() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Worker")
 	UCommanderComponent* GetOwnerCommander() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Worker")
 	void SetOwnerCommander(UCommanderComponent* Commander);
 
 	UFUNCTION(BlueprintCallable, Category = "Worker")

@@ -11,6 +11,7 @@
 #include "../Component/TeamComponent.h"
 #include "../Game/MyFirstRTSGameMode.h"
 #include "UnitAttackComponent.h"
+#include "UnitGathererComponent.h"
 
 // Sets default values for this component's properties
 UWorkerUnitBrain::UWorkerUnitBrain()
@@ -82,50 +83,6 @@ AActor* UWorkerUnitBrain::GetNextTargetInSight()
 	return targetRef;
 }
 
-void UWorkerUnitBrain::OnSightUpdated(AActor* Instigator)
-{
-	if (Instigator == nullptr) {
-		return;
-	}
-
-	if (this->IsFromTheSameTeam(Instigator)) {
-		return;
-	}
-
-	AAIController* ownerController = Cast<AAIController>(this->GetOwner());
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(ownerController->GetPawn());
-	if (asWorker == nullptr) {
-		UE_LOG(LogTemp, Warning, TEXT("Owner is not a valid worker."));
-		return;
-	}
-
-	AActor* currentTarget = asWorker->FindComponentByClass<UUnitAttackComponent>()->GetAttackTarget();
-	//if (currentTarget == nullptr) {
-	//	asWorker->SetAttackTarget(Instigator);
-	//	return;
-	//}
-
-	if (currentTarget == Instigator) {
-		return;
-	}
-
-	if (currentTarget->GetComponentByClass(UUnitComponent::StaticClass()) != nullptr && Instigator->GetComponentByClass(UUnitComponent::StaticClass()) != nullptr) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Select closest unit."));
-		// asWorker->SetAttackTarget(this->SelectClosestActor(currentTarget, Instigator));
-	}
-	else if (currentTarget->GetComponentByClass(UBuildingComponent::StaticClass()) != nullptr) {
-		// Units have priority over buildings.
-		if (Instigator->GetComponentByClass(UUnitComponent::StaticClass()) != nullptr) {
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Target unit."));
-			// asWorker->SetAttackTarget(Instigator);
-		}
-		else if (Instigator->GetComponentByClass(UBuildingComponent::StaticClass()) != nullptr) {
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Select closest building."));
-			// asWorker->SetAttackTarget(this->SelectClosestActor(currentTarget, Instigator));
-		}
-	}
-}
-
 AActor* UWorkerUnitBrain::GetPlayerTownhall()
 {
 	UWorld* world = this->GetWorld();
@@ -136,6 +93,23 @@ AActor* UWorkerUnitBrain::GetPlayerTownhall()
 	}
 
 	return rtsMode->GetPlayerTownhall();
+}
+
+bool UWorkerUnitBrain::IsCloserThanCurrentTarget(AActor* OtherRef)
+{
+	if (OtherRef == nullptr) {
+		return false;
+	}
+
+	AAIController* ownerController = Cast<AAIController>(this->GetOwner());
+	AActor* currentTarget = ownerController->GetPawn()->FindComponentByClass<UUnitAttackComponent>()->GetAttackTarget();
+	if (currentTarget == nullptr) {
+		return true;
+	}
+
+	AActor* closestActor = this->SelectClosestActor(currentTarget, OtherRef);
+
+	return closestActor == OtherRef;
 }
 
 bool UWorkerUnitBrain::IsFromTheSameTeam(AActor* OtherRef)
@@ -157,6 +131,18 @@ bool UWorkerUnitBrain::IsFromTheSameTeam(AActor* OtherRef)
 	}
 
 	return true;
+}
+
+bool UWorkerUnitBrain::IsGatheringResource()
+{
+	AAIController* ownerController = Cast<AAIController>(this->GetOwner());
+	UUnitGathererComponent* gatherComponent = ownerController->GetPawn()->FindComponentByClass<UUnitGathererComponent>();
+	if (gatherComponent == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("I, %s, don't have a gather component."), *ownerController->GetPawn()->GetName());
+		return true;
+	}
+
+	return gatherComponent->GetTargetResource() != nullptr;
 }
 
 AActor* UWorkerUnitBrain::SelectClosestActor(AActor* ActorARef, AActor* ActorBRef)

@@ -33,13 +33,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "WorkerBrain|Sight")
 	AActor* GetNextTargetInSight();
 
-	UFUNCTION(BlueprintCallable, Category = "WorkerBrain|Sight")
-	void OnSightUpdated(AActor* Instigator);
-
 	UFUNCTION(BlueprintCallable, Category = "WorkerBrain") 
 	AActor* GetPlayerTownhall();
 
+	UFUNCTION(BlueprintCallable, Category = "WorkerBrain")
+	bool IsCloserThanCurrentTarget(AActor* OtherRef);
+
+	UFUNCTION(BlueprintCallable, Category = "WorkerBrain")
 	bool IsFromTheSameTeam(AActor* OtherRef);
+
+	UFUNCTION(BlueprintCallable, Category = "WorkerBrain")
+	bool IsGatheringResource();
 
 	UFUNCTION(BlueprintCallable, Category = "WorkerBrain")
 	AActor* SelectClosestActor(AActor* ActorARef, AActor* ActorBRef);
