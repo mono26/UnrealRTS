@@ -89,7 +89,7 @@ void UUnitAttackComponent::OnExecuteAttack()
 	if (this->AttackRequest->GetDistanceToTarget() > currentDistance) {
 		UE_LOG(LogTemp, Warning, TEXT("Not in range to deal damage."), *target->GetName());
 
-		asWorker->GetOwnerCommander()->ExecuteAttackCommand(this->GetAttackTarget(), asWorker, this->AttackRequest->GetOnSuccess(), this->AttackRequest->GetOnFail());
+		asWorker->GetOwnerCommander()->CommandComponent->ExecuteAttackCommand(this->GetAttackTarget(), asWorker, this->AttackRequest->GetOnSuccess(), this->AttackRequest->GetOnFail());
 
 		return;
 	}

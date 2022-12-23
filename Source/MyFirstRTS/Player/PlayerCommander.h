@@ -20,8 +20,6 @@ class MYFIRSTRTS_API APlayerCommander : public APlayerController
 private:
 	TMap<EResourceType, int> StoredResources;
 
-	UCommanderComponent* CommandComponent = nullptr;
-
 public:
 	APlayerCommander();
 
@@ -29,9 +27,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "PlayerCommander")
-	AActor* GetPlayerTownhall();
-
 	UFUNCTION(BlueprintCallable, Category = "PlayerCommander|Resources")
 	TMap<EResourceType, int> GetStoredResources() const;
 

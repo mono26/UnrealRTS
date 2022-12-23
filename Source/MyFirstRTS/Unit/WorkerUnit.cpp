@@ -4,7 +4,6 @@
 #include "WorkerUnit.h"
 #include "AIController.h"
 #include "AITypes.h"
-//#include "Kismet/GameplayStatics.h"
 #include "UnitGathererComponent.h"
 #include "UnitAttackComponent.h"
 
@@ -56,12 +55,12 @@ UUnitComponent* AWorkerUnit::GetUnitComponent() const
 	return this->UnitComponent;
 }
 
-UCommanderComponent* AWorkerUnit::GetOwnerCommander() const
+UFactionCommander* AWorkerUnit::GetOwnerCommander() const
 {
 	return this->OwnerCommander;
 }
 
-void AWorkerUnit::SetOwnerCommander(UCommanderComponent* Commander)
+void AWorkerUnit::SetOwnerCommander(UFactionCommander* Commander)
 {
 	this->OwnerCommander = Commander;
 }

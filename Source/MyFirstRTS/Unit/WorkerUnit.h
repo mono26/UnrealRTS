@@ -10,7 +10,7 @@
 #include "../Resource/ResourceComponent.h"
 #include "../Unit/UnitComponent.h"
 #include "../Unit/Command/UnitCommand.h"
-#include "../Component/CommanderComponent.h"
+#include "../Component/FactionCommander.h"
 #include "WorkerUnit.generated.h"
 
 struct FExtendedTimer
@@ -61,7 +61,7 @@ class MYFIRSTRTS_API AWorkerUnit : public ACharacter
 private:
 	bool bIsRunningCommand = false;
 
-	UCommanderComponent* OwnerCommander = nullptr;
+	UFactionCommander* OwnerCommander = nullptr;
 
 	UUnitComponent* UnitComponent = nullptr;
 
@@ -90,10 +90,10 @@ public:
 	UUnitComponent* GetUnitComponent() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Worker")
-	UCommanderComponent* GetOwnerCommander() const;
+	UFactionCommander* GetOwnerCommander() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Worker")
-	void SetOwnerCommander(UCommanderComponent* Commander);
+	void SetOwnerCommander(UFactionCommander* Commander);
 
 	UFUNCTION(BlueprintCallable, Category = "Worker")
 	void StopAllActions();
