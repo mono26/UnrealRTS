@@ -2,14 +2,14 @@
 
 
 #include "WorkerUnitBrain.h"
-#include "WorkerUnit.h"
+#include "../WorkerUnit.h"
 #include "UnitComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISense_Sight.h"
 #include "Perception/AISenseConfig_Sight.h"
-#include "../Building/BuildingComponent.h"
-#include "../Component/TeamComponent.h"
-#include "../Game/MyFirstRTSGameMode.h"
+#include "../../Building/BuildingComponent.h"
+#include "../../Component/TeamComponent.h"
+#include "../../Game/MyFirstRTSGameMode.h"
 #include "UnitAttackComponent.h"
 #include "UnitGathererComponent.h"
 

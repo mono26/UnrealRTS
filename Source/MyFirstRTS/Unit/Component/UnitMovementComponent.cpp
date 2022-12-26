@@ -4,7 +4,7 @@
 #include "UnitMovementComponent.h"
 #include "AIController.h"
 #include "AITypes.h"
-#include "../Unit/UnitComponent.h"
+#include "UnitComponent.h"
 
 // Sets default values for this component's properties
 UUnitMovementComponent::UUnitMovementComponent()

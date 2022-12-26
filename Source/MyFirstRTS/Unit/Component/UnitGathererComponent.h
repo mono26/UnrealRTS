@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "WorkerUnit.h"
+#include "../RTSUnit.h"
+#include "../../Resource/ResourceComponent.h"
 #include "UnitGathererComponent.generated.h"
 
 struct FGatherRequest

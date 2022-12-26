@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "../Unit/Command/UnitCommand.h"
+#include "../Command/UnitCommand.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "UnitMovementComponent.generated.h"
 
