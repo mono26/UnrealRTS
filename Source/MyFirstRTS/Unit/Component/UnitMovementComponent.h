@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "../Command/UnitCommand.h"
 #include "Navigation/PathFollowingComponent.h"
+#include "UnitComponentInterface.h"
 #include "UnitMovementComponent.generated.h"
 
 struct FMovementRequest
@@ -46,7 +47,7 @@ public:
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class MYFIRSTRTS_API UUnitMovementComponent : public UActorComponent
+class MYFIRSTRTS_API UUnitMovementComponent : public UActorComponent, public IUnitComponentInterface
 {
 	GENERATED_BODY()
 
@@ -76,4 +77,6 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Worker|Movement")
 	void OnStartMovement();
+
+	void StopAction() override;
 };

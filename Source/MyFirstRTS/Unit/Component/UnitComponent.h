@@ -6,6 +6,7 @@
 #include "Delegates/Delegate.h"
 #include "AIController.h"
 #include "Components/ActorComponent.h"
+ #include "UnitComponentInterface.h"
 #include "UnitComponent.generated.h"
 
 UENUM(BlueprintType)
@@ -19,7 +20,7 @@ enum class EUnitStates : uint8
 };
 
 UCLASS(BlueprintType, Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class MYFIRSTRTS_API UUnitComponent : public UActorComponent
+class MYFIRSTRTS_API UUnitComponent : public UActorComponent, public IUnitComponentInterface
 {
 	GENERATED_BODY()
 
@@ -69,4 +70,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Unit|State")
 	void SetCurrentState(EUnitStates NewState);
+
+	void StopAction() override;
 };

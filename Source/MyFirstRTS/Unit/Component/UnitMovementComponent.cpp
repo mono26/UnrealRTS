@@ -98,3 +98,9 @@ void UUnitMovementComponent::OnMoveRequestCompleted(FAIRequestID RequestID, cons
 	// TODO: need to check if structs need to be deleted, if so find a way of doing it without crashing the editor.
 	// delete request;
 }
+
+void UUnitMovementComponent::StopAction()
+{
+	AAIController* controller = Cast<AAIController>(Cast<APawn>(this->GetOwner())->GetController());
+	controller->StopMovement();
+}

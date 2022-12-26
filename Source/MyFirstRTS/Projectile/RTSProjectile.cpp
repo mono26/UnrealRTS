@@ -17,6 +17,7 @@ void ARTSProjectile::BeginPlay()
 	Super::BeginPlay();
 
 	this->CollisionComponent = this->FindComponentByClass<USphereComponent>();
+    this->CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
 	this->CollisionComponent->InitSphereRadius(15.0f);
 
     this->ProjectileMovementComponent = this->FindComponentByClass<UProjectileMovementComponent>();
@@ -38,4 +39,19 @@ void ARTSProjectile::Tick(float DeltaTime)
 void ARTSProjectile::FireInDirection(const FVector& ShootDirection)
 {
     this->ProjectileMovementComponent->Velocity = ShootDirection * this->ProjectileMovementComponent->InitialSpeed;
+}
+
+void ARTSProjectile::SetOnImpact(FActionSignature Callback)
+{
+    this->OnImpact = Callback;
+}
+
+// Function that is called when the projectile hits something.
+void ARTSProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+{
+    if (OtherActor != this && OtherComponent->IsSimulatingPhysics()) {
+        OtherComponent->AddImpulseAtLocation(ProjectileMovementComponent->Velocity * 100.0f, Hit.ImpactPoint);
+    }
+
+    this->Destroy();
 }

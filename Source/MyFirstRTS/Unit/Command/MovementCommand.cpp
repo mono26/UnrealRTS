@@ -2,7 +2,7 @@
 
 #include "MovementCommand.h"
 #include "../WorkerUnit.h"
-#include "../UnitMovementComponent.h"
+#include "../Component/UnitMovementComponent.h"
 
 UMovementCommand::UMovementCommand() : Super()
 {

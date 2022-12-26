@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "../RTSUnit.h"
 #include "../../Resource/ResourceComponent.h"
+#include "UnitComponentInterface.h"
 #include "UnitGathererComponent.generated.h"
 
 struct FGatherRequest
@@ -62,7 +63,7 @@ public:
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class MYFIRSTRTS_API UUnitGathererComponent : public UActorComponent
+class MYFIRSTRTS_API UUnitGathererComponent : public UActorComponent, public IUnitComponentInterface
 {
 	GENERATED_BODY()
 
@@ -101,4 +102,6 @@ public:
 	void SetGatherRequest(FGatherRequest Request);
 
 	void StoreResource();
+
+	void StopAction() override;
 };

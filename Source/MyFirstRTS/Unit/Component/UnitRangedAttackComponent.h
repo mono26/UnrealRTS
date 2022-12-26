@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MYFIRSTRTS_API UUnitRangedAttackComponent : public UUnitAttackComponent
 {
 	GENERATED_BODY()
@@ -20,7 +20,7 @@ public:
 	USceneComponent* Muzzle;
 
 	// Projectile class to spawn.
-	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	UPROPERTY(EditDefaultsOnly, Category = "RangedAttack")
 	TSubclassOf<class ARTSProjectile> ProjectileClass;
 
 public:

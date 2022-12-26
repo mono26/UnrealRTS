@@ -2,6 +2,7 @@
 
 
 #include "RTSUnit.h"
+// #include "Component/UnitComponentInterface.h"
 
 // Sets default values
 ARTSUnit::ARTSUnit()
@@ -64,10 +65,11 @@ void ARTSUnit::SetOwnerCommander(UFactionCommander* Commander)
 
 void ARTSUnit::StopAllActions()
 {
-	AAIController* controller = Cast<AAIController>(this->GetController());
-	controller->StopMovement();
-
-	this->UnitComponent->SetCurrentState(EUnitStates::Idle);
+	//TArray<IUnitComponentInterface*> unitComponents;
+	//this->GetComponents<IUnitComponentInterface>(unitComponents, false);
+	//for (IUnitComponentInterface* component : unitComponents) {
+	//	component->StopAction();
+	//}
 
 	this->OnStopAll();
 

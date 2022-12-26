@@ -51,3 +51,8 @@ void UUnitComponent::SetCurrentState(EUnitStates NewState)
 		this->OnCurrentStateChanged.Broadcast();
 	}
 }
+
+void UUnitComponent::StopAction()
+{
+	this->SetCurrentState(EUnitStates::Idle);
+}

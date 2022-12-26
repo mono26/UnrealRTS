@@ -6,7 +6,7 @@
 #include "MovementCommand.h"
 #include "../../Component/InteractableComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "../UnitAttackComponent.h"
+#include "../Component/UnitAttackComponent.h"
 
 UAttackCommand::UAttackCommand() : Super()
 {

@@ -123,3 +123,8 @@ void UUnitGathererComponent::StoreResource()
 	// TODO delete old resource? Or maybe just create a pointer and set the inner values.
 	this->CarriedResource = FResource();
 }
+
+void UUnitGathererComponent::StopAction()
+{
+	this->ClearGatherRequest();
+}

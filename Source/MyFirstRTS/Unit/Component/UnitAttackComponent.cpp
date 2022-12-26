@@ -99,6 +99,11 @@ void UUnitAttackComponent::OnExecuteAttack()
 	this->AttackRequest->GetOnSuccess().ExecuteIfBound();
 }
 
+void UUnitAttackComponent::StopAction()
+{
+	this->ClearAttackRequest();
+}
+
 void UUnitAttackComponent::SetAttackRequest(FAttackRequest Request)
 {
 	AActor* oldTarget = this->GetAttackTarget();

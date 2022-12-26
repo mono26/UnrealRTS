@@ -6,7 +6,7 @@
 #include "MovementCommand.h"
 #include "../../Component/InteractableComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "../UnitGathererComponent.h"
+#include "../Component/UnitGathererComponent.h"
 
 UGatherCommand::UGatherCommand() : Super()
 {

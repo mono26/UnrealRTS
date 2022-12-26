@@ -6,7 +6,7 @@
 #include "MovementCommand.h"
 #include "../../Component/InteractableComponent.h"
 #include "DrawDebugHelpers.h"
-#include "../UnitGathererComponent.h"
+#include "../Component/UnitGathererComponent.h"
 
 UStoreCommand::UStoreCommand() : Super()
 {
@@ -23,10 +23,6 @@ void UStoreCommand::Execute()
 	}
 
 	UInteractableComponent* interactableComponent = this->StorageRef->FindComponentByClass<UInteractableComponent>();
-	if (interactableComponent == nullptr) {
-		this->OnFail.ExecuteIfBound();
-		return;
-	}
 
 	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
 

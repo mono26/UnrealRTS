@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "../WorkerUnit.h"
+ #include "UnitComponentInterface.h"
 #include "UnitAttackComponent.generated.h"
 
 struct FAttackRequest
@@ -75,7 +76,7 @@ public:
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTargetChangedSignature, const AActor*, OldTarget, const AActor*, NewTarget);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class MYFIRSTRTS_API UUnitAttackComponent : public UActorComponent
+class MYFIRSTRTS_API UUnitAttackComponent : public UActorComponent, public IUnitComponentInterface
 {
 	GENERATED_BODY()
 
@@ -113,4 +114,6 @@ public:
 
 	UFUNCTION()
 	virtual void OnExecuteAttack();
+
+	void StopAction() override;
 };
