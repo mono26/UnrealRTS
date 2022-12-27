@@ -2,6 +2,7 @@
 
 
 #include "CommanderComponent.h"
+#include "../Unit/RTSUnit.h"
 #include "../Unit/Command/MovementCommand.h"
 #include "../Unit/Command/StopCommand.h"
 #include "../Unit/Command/GatherCommand.h"
@@ -40,7 +41,7 @@ void UCommanderComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UCommanderComponent::ExecuteAttackCommand(AActor* AttackTarget, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail)
 {
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
+	ARTSUnit* asWorker = Cast<ARTSUnit>(UnitRef);
 	if (asWorker == nullptr) {
 		return;
 	}
@@ -55,7 +56,7 @@ void UCommanderComponent::ExecuteAttackCommand(AActor* AttackTarget, AActor* Uni
 
 void UCommanderComponent::ExecuteGatherCommand(AActor* Resource, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail)
 {
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
+	ARTSUnit* asWorker = Cast<ARTSUnit>(UnitRef);
 	if (asWorker == nullptr) {
 		return;
 	}
@@ -70,7 +71,7 @@ void UCommanderComponent::ExecuteGatherCommand(AActor* Resource, AActor* UnitRef
 
 void UCommanderComponent::ExecuteMovementCommand(FVector TargetPosition, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail)
 {
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
+	ARTSUnit* asWorker = Cast<ARTSUnit>(UnitRef);
 	if (asWorker == nullptr) {
 		return;
 	}
@@ -78,6 +79,8 @@ void UCommanderComponent::ExecuteMovementCommand(FVector TargetPosition, AActor*
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(UnitRef);
 	movementCommmand->SetTargetPosition(TargetPosition);
+	// TODO get unit size.
+	movementCommmand->SetAcceptanceRange(60.0f);
 	movementCommmand->SetOnSuccess(OnSuccess);
 	movementCommmand->SetOnFail(OnFail);
 	asWorker->ExecuteCommand(movementCommmand);
@@ -85,7 +88,7 @@ void UCommanderComponent::ExecuteMovementCommand(FVector TargetPosition, AActor*
 
 void UCommanderComponent::ExecuteStopCommand(AActor* UnitRef)
 {
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
+	ARTSUnit* asWorker = Cast<ARTSUnit>(UnitRef);
 	if (asWorker == nullptr) {
 		return;
 	}
@@ -97,7 +100,7 @@ void UCommanderComponent::ExecuteStopCommand(AActor* UnitRef)
 
 void UCommanderComponent::ExecuteStoreCommand(AActor* Storage, AActor* UnitRef, FActionSignature OnSuccess, FActionSignature OnFail)
 {
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(UnitRef);
+	ARTSUnit* asWorker = Cast<ARTSUnit>(UnitRef);
 	if (asWorker == nullptr) {
 		return;
 	}

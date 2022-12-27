@@ -2,7 +2,7 @@
 
 
 #include "GatherCommand.h"
-#include "../WorkerUnit.h"
+#include "../RTSUnit.h"
 #include "MovementCommand.h"
 #include "../../Component/InteractableComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -29,9 +29,9 @@ void UGatherCommand::Execute()
 		return;
 	}
 
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
+	ARTSUnit* asUnit = Cast<ARTSUnit>(this->UnitRef);
 
-	UUnitGathererComponent* gatherComponent = asWorker->FindComponentByClass<UUnitGathererComponent>();
+	UUnitGathererComponent* gatherComponent = this->UnitRef->FindComponentByClass<UUnitGathererComponent>();
 
 	FGatherRequest gatherRequest = FGatherRequest(this->ResourceRef, this->OnSuccess, this->OnFail);
 	gatherComponent->SetGatherRequest(gatherRequest);
@@ -41,9 +41,11 @@ void UGatherCommand::Execute()
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(this->UnitRef);
 	movementCommmand->SetTargetPosition(gatherComponent->GetTargetResource()->GetActorLocation());
+	// TODO get unit size.
+	movementCommmand->SetAcceptanceRange(60.0f);
 	movementCommmand->SetOnSuccess(this->OnReachResourceDelegate);
 	movementCommmand->SetOnFail(this->OnFail);
-	asWorker->ExecuteCommand(movementCommmand);
+	asUnit->ExecuteCommand(movementCommmand);
 }
 
 void UGatherCommand::SetResource(AActor* Resource)
@@ -53,9 +55,7 @@ void UGatherCommand::SetResource(AActor* Resource)
 
 void UGatherCommand::OnReachResource()
 {
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
-
-	UUnitGathererComponent* gatherComponent = asWorker->FindComponentByClass<UUnitGathererComponent>();
+	UUnitGathererComponent* gatherComponent = this->UnitRef->FindComponentByClass<UUnitGathererComponent>();
 
 	if (gatherComponent->GetTargetResource() == nullptr) {
 		UE_LOG(LogTemp, Warning, TEXT("No target resource."));
@@ -63,12 +63,12 @@ void UGatherCommand::OnReachResource()
 		return;
 	}
 
-	FVector currentLocation = asWorker->GetActorLocation();
+	FVector currentLocation = this->UnitRef->GetActorLocation();
 	FVector resourceLocation = gatherComponent->GetTargetResource()->GetActorLocation();
 	resourceLocation.Z = currentLocation.Z;
 
 	FRotator lookAtRotation = UKismetMathLibrary::FindLookAtRotation(currentLocation, resourceLocation);
-	asWorker->SetActorRotation(lookAtRotation);
+	this->UnitRef->SetActorRotation(lookAtRotation);
 
 	gatherComponent->ExtractResource();
 }

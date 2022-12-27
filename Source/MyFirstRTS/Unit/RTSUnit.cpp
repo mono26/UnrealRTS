@@ -2,7 +2,7 @@
 
 
 #include "RTSUnit.h"
-// #include "Component/UnitComponentInterface.h"
+#include "Component/UnitComponentInterface.h"
 
 // Sets default values
 ARTSUnit::ARTSUnit()
@@ -65,11 +65,15 @@ void ARTSUnit::SetOwnerCommander(UFactionCommander* Commander)
 
 void ARTSUnit::StopAllActions()
 {
-	//TArray<IUnitComponentInterface*> unitComponents;
-	//this->GetComponents<IUnitComponentInterface>(unitComponents, false);
-	//for (IUnitComponentInterface* component : unitComponents) {
-	//	component->StopAction();
-	//}
+	TArray<UActorComponent*> unitComponents = this->GetComponentsByInterface(UUnitComponentInterface::StaticClass());	
+	for (UActorComponent* component : unitComponents) {
+		IUnitComponentInterface* asUnitComponent = Cast<IUnitComponentInterface>(component);
+		if (asUnitComponent == nullptr) {
+			continue;
+		}
+
+		asUnitComponent->StopAction();
+	}
 
 	this->OnStopAll();
 

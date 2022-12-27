@@ -67,15 +67,15 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Worker|Movement")
-	void MoveToPosition(FVector Position, FActionSignature OnSuccess, FActionSignature OnFail);
+	UFUNCTION(BlueprintCallable, Category = "Unit|Movement")
+	void MoveToPosition(FVector Position, float AcceptanceRange, FActionSignature OnSuccess, FActionSignature OnFail);
 
-	UFUNCTION(BlueprintCallable, Category = "Worker|Movement")
-	void MoveToActor(AActor* ActorRef, FActionSignature OnSuccess, FActionSignature OnFail);
+	UFUNCTION(BlueprintCallable, Category = "Unit|Movement")
+	void MoveToActor(AActor* ActorRef, float AcceptanceRange, FActionSignature OnSuccess, FActionSignature OnFail);
 
 	void OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Worker|Movement")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Unit|Movement")
 	void OnStartMovement();
 
 	void StopAction() override;

@@ -2,11 +2,12 @@
 
 
 #include "AttackCommand.h"
-#include "../WorkerUnit.h"
+#include "../RTSUnit.h"
 #include "MovementCommand.h"
 #include "../../Component/InteractableComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "../Component/UnitAttackComponent.h"
+#include "../../Component/HealthComponent.h"
 
 UAttackCommand::UAttackCommand() : Super()
 {
@@ -17,20 +18,24 @@ UAttackCommand::UAttackCommand() : Super()
 
 void UAttackCommand::Execute()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Try ExecuteAttackCommand"));
+
 	if (this->AttackTargetRef == nullptr || this->UnitRef == nullptr) {
 		UE_LOG(LogTemp, Warning, TEXT("Invalid data for attack."));
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
 
-	UInteractableComponent* interactableComponent = this->AttackTargetRef->FindComponentByClass<UInteractableComponent>();
-	if (interactableComponent == nullptr) {
-		UE_LOG(LogTemp, Warning, TEXT("No interactable target."));
+	UHealthComponent* healthComponent = this->UnitRef->FindComponentByClass<UHealthComponent>();
+	if (healthComponent->GetHealthCurrent() <= 0) {
+		UE_LOG(LogTemp, Warning, TEXT("Invalid target for attack."));
 		this->OnFail.ExecuteIfBound();
 		return;
 	}
 
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
+	UInteractableComponent* interactableComponent = this->AttackTargetRef->FindComponentByClass<UInteractableComponent>();
+
+	ARTSUnit* asWorker = Cast<ARTSUnit>(this->UnitRef);
 
 	UUnitAttackComponent* attackComponent = asWorker->FindComponentByClass<UUnitAttackComponent>();
 
@@ -44,6 +49,7 @@ void UAttackCommand::Execute()
 	UMovementCommand* movementCommmand = NewObject<UMovementCommand>();
 	movementCommmand->SetUnit(this->UnitRef);
 	movementCommmand->SetTargetPosition(interactPosition);
+	movementCommmand->SetAcceptanceRange(asWorker->GetUnitComponent()->AttackRange - 1.0f);
 	movementCommmand->SetOnSuccess(this->OnReachAttackTargetDelegate);
 	movementCommmand->SetOnFail(this->OnFail);
 	asWorker->ExecuteCommand(movementCommmand);
@@ -56,7 +62,7 @@ void UAttackCommand::SetAttackTarget(AActor* AttackTarget)
 
 void UAttackCommand::OnReachAttackTarget()
 {
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
+	ARTSUnit* asWorker = Cast<ARTSUnit>(this->UnitRef);
 
 	UUnitAttackComponent* attackComponent = asWorker->FindComponentByClass<UUnitAttackComponent>();
 

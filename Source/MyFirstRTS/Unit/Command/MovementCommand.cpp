@@ -1,7 +1,6 @@
 // Copyright: For learning purposes, Mono Zubiria.
 
 #include "MovementCommand.h"
-#include "../WorkerUnit.h"
 #include "../Component/UnitMovementComponent.h"
 
 UMovementCommand::UMovementCommand() : Super()
@@ -10,6 +9,11 @@ UMovementCommand::UMovementCommand() : Super()
 
 	this->OnReachedPositionDelegate.BindUFunction(this, FName("OnReachTargetPosition"));
 	this->OnReachPositionFailDelegate.BindUFunction(this, FName("OnReachTargetPositionFail"));
+}
+
+void UMovementCommand::SetAcceptanceRange(float Range)
+{
+	this->AcceptanceRange = Range;
 }
 
 void UMovementCommand::SetTargetPosition(FVector Position)
@@ -34,7 +38,7 @@ void UMovementCommand::Execute()
 
 	UE_LOG(LogTemp, Warning, TEXT("ExecuteMovementCommand"));
 
-	movementComponent->MoveToPosition(this->TargetPosition, this->OnReachedPositionDelegate, this->OnReachPositionFailDelegate);
+	movementComponent->MoveToPosition(this->TargetPosition, this->AcceptanceRange, this->OnReachedPositionDelegate, this->OnReachPositionFailDelegate);
 }
 
 void UMovementCommand::OnReachTargetPosition()

@@ -2,7 +2,7 @@
 
 
 #include "StopCommand.h"
-#include "../WorkerUnit.h"
+#include "../RTSUnit.h"
 
 UStopCommand::UStopCommand() : Super()
 {
@@ -10,7 +10,7 @@ UStopCommand::UStopCommand() : Super()
 
 void UStopCommand::Execute()
 {
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
+	ARTSUnit* asWorker = Cast<ARTSUnit>(this->UnitRef);
 
 	UE_LOG(LogTemp, Warning, TEXT("ExecuteStopCommand"));
 

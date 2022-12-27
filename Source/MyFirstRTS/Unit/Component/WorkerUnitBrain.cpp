@@ -2,7 +2,6 @@
 
 
 #include "WorkerUnitBrain.h"
-#include "../WorkerUnit.h"
 #include "UnitComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISense_Sight.h"
@@ -12,6 +11,7 @@
 #include "../../Game/MyFirstRTSGameMode.h"
 #include "UnitAttackComponent.h"
 #include "UnitGathererComponent.h"
+#include "../../Component/HealthComponent.h"
 
 // Sets default values for this component's properties
 UWorkerUnitBrain::UWorkerUnitBrain()
@@ -59,6 +59,11 @@ AActor* UWorkerUnitBrain::GetNextTargetInSight()
 	AActor* targetRef = nullptr;
 	for (AActor* actor : possibleTargets) {
 		if (!this->IsFromTheSameTeam(actor)) {
+			continue;
+		}
+
+		UHealthComponent* healthComponent = actor->FindComponentByClass<UHealthComponent>();
+		if (healthComponent->GetHealthCurrent() <= 0) {
 			continue;
 		}
 

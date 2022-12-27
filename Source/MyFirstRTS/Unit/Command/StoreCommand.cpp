@@ -2,7 +2,7 @@
 
 
 #include "StoreCommand.h"
-#include "../WorkerUnit.h"
+#include "../RTSUnit.h"
 #include "MovementCommand.h"
 #include "../../Component/InteractableComponent.h"
 #include "DrawDebugHelpers.h"
@@ -24,7 +24,7 @@ void UStoreCommand::Execute()
 
 	UInteractableComponent* interactableComponent = this->StorageRef->FindComponentByClass<UInteractableComponent>();
 
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
+	ARTSUnit* asWorker = Cast<ARTSUnit>(this->UnitRef);
 
 	FVector interactPosition = interactableComponent->GetClosestInteractionPositionTo(this->UnitRef);
 
@@ -45,7 +45,7 @@ void UStoreCommand::SetStorage(AActor* Storage)
 
 void UStoreCommand::OnReachStorage()
 {
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->UnitRef);
+	ARTSUnit* asWorker = Cast<ARTSUnit>(this->UnitRef);
 
 	UUnitGathererComponent* gatherComponent = asWorker->FindComponentByClass<UUnitGathererComponent>();
 

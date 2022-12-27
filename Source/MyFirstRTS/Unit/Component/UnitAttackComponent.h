@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "../WorkerUnit.h"
- #include "UnitComponentInterface.h"
+#include "../RTSUnit.h"
+#include "../Command/UnitCommand.h"
+#include "UnitComponentInterface.h"
 #include "UnitAttackComponent.generated.h"
 
 struct FAttackRequest
@@ -84,9 +85,10 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Worker|Target")
 	FTargetChangedSignature OnTargetChangedEvent;
 
-private:
-	FAttackRequest* AttackRequest;
+protected:
 	FExtendedTimer* AttackTimer;
+
+	FAttackRequest* AttackRequest;
 	FActionSignature OnExecuteAttackDelegate;
 
 public:	

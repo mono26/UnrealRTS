@@ -3,6 +3,7 @@
 
 #include "UnitAttackComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "../RTSUnit.h"
 #include "../../Component/InteractableComponent.h"
 
 // Sets default values for this component's properties
@@ -42,7 +43,7 @@ void UUnitAttackComponent::ExecuteAttack()
 		return;
 	}
 
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->GetOwner());
+	ARTSUnit* asWorker = Cast<ARTSUnit>(this->GetOwner());
 
 	UInteractableComponent* interactableComponent = this->GetAttackTarget()->FindComponentByClass<UInteractableComponent>();
 
@@ -57,7 +58,7 @@ void UUnitAttackComponent::ExecuteAttack()
 
 void UUnitAttackComponent::ClearAttackRequest()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ClearAttackRequest."));
+	UE_LOG(LogTemp, Warning, TEXT("Clear attack request."));
 
 	this->SetAttackRequest(FAttackRequest());
 
@@ -83,10 +84,13 @@ void UUnitAttackComponent::OnExecuteAttack()
 		return;
 	}
 
-	AWorkerUnit* asWorker = Cast<AWorkerUnit>(this->GetOwner());
+	ARTSUnit* asWorker = Cast<ARTSUnit>(this->GetOwner());
 
-	float currentDistance = FVector::DistSquared(this->GetOwner()->GetActorLocation(), this->GetAttackTarget()->GetActorLocation());
-	if (this->AttackRequest->GetDistanceToTarget() > currentDistance) {
+	UInteractableComponent* interactableComponent = this->GetAttackTarget()->FindComponentByClass<UInteractableComponent>();
+
+	float currentDistance = FVector::DistSquared(this->GetOwner()->GetActorLocation(), interactableComponent->GetClosestInteractionPositionTo(this->GetOwner()));
+	float attackRange = asWorker->GetUnitComponent()->AttackRange;
+	if (this->AttackRequest->GetDistanceToTarget() < /*currentDistance*/attackRange * attackRange) {
 		UE_LOG(LogTemp, Warning, TEXT("Not in range to deal damage."), *target->GetName());
 
 		asWorker->GetOwnerCommander()->CommandComponent->ExecuteAttackCommand(this->GetAttackTarget(), asWorker, this->AttackRequest->GetOnSuccess(), this->AttackRequest->GetOnFail());
@@ -106,6 +110,8 @@ void UUnitAttackComponent::StopAction()
 
 void UUnitAttackComponent::SetAttackRequest(FAttackRequest Request)
 {
+	UE_LOG(LogTemp, Warning, TEXT("SetAttackRequest"));
+
 	AActor* oldTarget = this->GetAttackTarget();
 
 	this->AttackRequest->SetAttackTargetRef(Request.GetAttackTargetRef());

@@ -36,7 +36,7 @@ void UUnitMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
-void UUnitMovementComponent::MoveToPosition(FVector Position, FActionSignature OnSuccess, FActionSignature OnFail)
+void UUnitMovementComponent::MoveToPosition(FVector Position, float AcceptanceRange, FActionSignature OnSuccess, FActionSignature OnFail)
 {
 	AAIController* controller = Cast<AAIController>(Cast<APawn>(this->GetOwner())->GetController());
 	if (controller == nullptr) {
@@ -47,7 +47,7 @@ void UUnitMovementComponent::MoveToPosition(FVector Position, FActionSignature O
 
 	EPathFollowingRequestResult::Type requestResult = controller->MoveToLocation(
 		Position + FVector(0, 0, 0.1f),
-		60.0f /*TODO use interactable size.*/,
+		AcceptanceRange,
 		false
 	);
 
@@ -69,9 +69,9 @@ void UUnitMovementComponent::MoveToPosition(FVector Position, FActionSignature O
 	}
 }
 
-void UUnitMovementComponent::MoveToActor(AActor* ActorRef, FActionSignature OnSuccess, FActionSignature OnFail)
+void UUnitMovementComponent::MoveToActor(AActor* ActorRef, float AcceptanceRange, FActionSignature OnSuccess, FActionSignature OnFail)
 {
-	this->MoveToPosition(ActorRef->GetActorLocation(), OnSuccess, OnFail);
+	this->MoveToPosition(ActorRef->GetActorLocation(), AcceptanceRange, OnSuccess, OnFail);
 }
 
 void UUnitMovementComponent::OnMoveRequestCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
