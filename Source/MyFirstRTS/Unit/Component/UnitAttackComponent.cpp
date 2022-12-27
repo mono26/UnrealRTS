@@ -26,7 +26,6 @@ void UUnitAttackComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-
 }
 
 // Called every frame
@@ -58,8 +57,6 @@ void UUnitAttackComponent::ExecuteAttack()
 
 void UUnitAttackComponent::ClearAttackRequest()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Clear attack request."));
-
 	this->SetAttackRequest(FAttackRequest());
 
 	if (this->AttackTimer != nullptr) {

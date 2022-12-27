@@ -9,8 +9,6 @@
 UUnitRangedAttackComponent::UUnitRangedAttackComponent() : Super()
 {
     this->OnImpactDelegate.BindUFunction(this, FName("OnImpact"));
-
-
 }
 
 // Called when the game starts

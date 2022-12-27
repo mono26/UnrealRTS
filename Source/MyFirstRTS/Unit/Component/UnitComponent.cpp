@@ -16,7 +16,6 @@ UUnitComponent::UUnitComponent()
 	this->CurrentState = EUnitStates::None;
 }
 
-
 // Called when the game starts
 void UUnitComponent::BeginPlay()
 {
@@ -29,7 +28,6 @@ void UUnitComponent::BeginPlay()
 	UHealthComponent* healthComponent = this->GetOwner()->FindComponentByClass<UHealthComponent>();
 	healthComponent->InitializeHealthValues(this->HealthMax);
 }
-
 
 // Called every frame
 void UUnitComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

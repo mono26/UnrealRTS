@@ -20,7 +20,6 @@ private:
 	UWeaponSocketComponent* Muzzle;
 
 public:
-
 	// Projectile class to spawn.
 	UPROPERTY(EditDefaultsOnly, Category = "RangedAttack")
 	TSubclassOf<class ARTSProjectile> ProjectileClass;
