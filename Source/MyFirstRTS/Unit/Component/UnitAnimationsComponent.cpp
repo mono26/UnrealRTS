@@ -21,7 +21,6 @@ void UUnitAnimationsComponent::BeginPlay()
 	// ...
 	this->SkeletalMeshComponent = this->GetOwner()->FindComponentByClass<USkeletalMeshComponent>();
 	this->UnitComponent = this->GetOwner()->FindComponentByClass<UUnitComponent>();
-	this->UnitComponent->OnCurrentStateChanged.AddUObject(this, &UUnitAnimationsComponent::OnUnitStateChange);
 }
 
 // Called every frame

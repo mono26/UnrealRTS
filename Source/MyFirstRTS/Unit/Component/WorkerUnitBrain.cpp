@@ -144,7 +144,7 @@ bool UWorkerUnitBrain::IsGatheringResource()
 	UUnitGathererComponent* gatherComponent = ownerController->GetPawn()->FindComponentByClass<UUnitGathererComponent>();
 	if (gatherComponent == nullptr) {
 		UE_LOG(LogTemp, Warning, TEXT("I, %s, don't have a gather component."), *ownerController->GetPawn()->GetName());
-		return true;
+		return false;
 	}
 
 	return gatherComponent->GetTargetResource() != nullptr;

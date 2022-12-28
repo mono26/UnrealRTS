@@ -103,6 +103,10 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+protected:
+	UFUNCTION()
+	virtual void OnExecuteAttack();
+
 public:
 	virtual void ExecuteAttack();
 
@@ -113,9 +117,6 @@ public:
 	AActor* GetAttackTarget() const;
 
 	void SetAttackRequest(FAttackRequest Request);
-
-	UFUNCTION()
-	virtual void OnExecuteAttack();
 
 	void StopAction() override;
 };

@@ -16,17 +16,19 @@ class MYFIRSTRTS_API UUnitAnimationsComponent : public UActorComponent
 	GENERATED_BODY()
 
 private:
+	UUnitComponent::FOnStateChangedSignature* OnStateChangedDelegate;
+
 	USkeletalMeshComponent* SkeletalMeshComponent;
 	UUnitComponent* UnitComponent;
 
 public:
-	UPROPERTY(EditDefaultsOnly, Category = "Unit|Animation")
+	UPROPERTY(EditDefaultsOnly, Category = "Unit|Animations")
 	UAnimationAsset* MovingAnimation;
-	UPROPERTY(EditDefaultsOnly, Category = "Unit|Animation")
+	UPROPERTY(EditDefaultsOnly, Category = "Unit|Animations")
 	UAnimationAsset* AttackingAnimation;
-	UPROPERTY(EditDefaultsOnly, Category = "Unit|Animation")
+	UPROPERTY(EditDefaultsOnly, Category = "Unit|Animations")
 	UAnimationAsset* GatheringAnimation;
-	UPROPERTY(EditDefaultsOnly, Category = "Unit|Animation")
+	UPROPERTY(EditDefaultsOnly, Category = "Unit|Animations")
 	UAnimationAsset* IdleAnimation;
 
 public:	
@@ -42,5 +44,6 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
+	UFUNCTION(BlueprintCallable, Category = "Unit|Animations")
 	void OnUnitStateChange();
 };

@@ -23,12 +23,18 @@ void UUnitRangedAttackComponent::BeginPlay()
 void UUnitRangedAttackComponent::ExecuteAttack()
 {
     if (this->GetAttackTarget() == nullptr) {
+        this->AttackRequest->GetOnFail().ExecuteIfBound();
         return;
     }
 
     ARTSUnit* asWorker = Cast<ARTSUnit>(this->GetOwner());
 
     UInteractableComponent* interactableComponent = this->GetAttackTarget()->FindComponentByClass<UInteractableComponent>();
+
+    if (asWorker == nullptr || interactableComponent == nullptr) {
+        this->AttackRequest->GetOnFail().ExecuteIfBound();
+        return;
+    }
 
     this->AttackRequest->SetDistanceToTarget(FVector::DistSquared(this->GetOwner()->GetActorLocation(), interactableComponent->GetClosestInteractionPositionTo(this->GetOwner())));
 
@@ -42,10 +48,32 @@ void UUnitRangedAttackComponent::ExecuteAttack()
 
 void UUnitRangedAttackComponent::OnExecuteAttack()
 {
-    // Attempt to fire a projectile.
-    if (!this->ProjectileClass) {
+    if (this->Muzzle == nullptr) {
+        this->AttackRequest->GetOnFail().ExecuteIfBound();
         return;
     }
+
+    ARTSProjectile* projectile = this->CreateProjectile();
+
+    if (projectile == nullptr) {
+        this->AttackRequest->GetOnFail().ExecuteIfBound();
+        return;
+    }
+
+    // Set the projectile's initial trajectory.
+    FVector launchDirection = this->GetAttackTarget()->GetTargetLocation() - this->Muzzle->GetComponentLocation();
+    projectile->FireInDirection(launchDirection);
+}
+
+ARTSProjectile* UUnitRangedAttackComponent::CreateProjectile()
+{
+    // Attempt to create a projectile.
+    if (this->ProjectileClass == nullptr) {
+        UE_LOG(LogTemp, Warning, TEXT("No projectile class assigned."));
+        return nullptr;
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("CreateProjectile."));
 
     UWorld* world = this->GetWorld();
     FActorSpawnParameters spawnParams;
@@ -55,13 +83,14 @@ void UUnitRangedAttackComponent::OnExecuteAttack()
     // Spawn the projectile at the muzzle.
     ARTSProjectile* projectile = world->SpawnActor<ARTSProjectile>(this->ProjectileClass, this->Muzzle->GetComponentLocation(), this->Muzzle->GetComponentRotation(), spawnParams);
     projectile->SetOnImpact(this->OnImpactDelegate);
-    // Set the projectile's initial trajectory.
-    FVector launchDirection = this->GetAttackTarget()->GetTargetLocation() - this->Muzzle->GetComponentLocation();
-    projectile->FireInDirection(launchDirection);
+
+    return projectile;
 }
 
 void UUnitRangedAttackComponent::OnImpact()
 {
+    UE_LOG(LogTemp, Warning, TEXT("OnImpact"));
+
     AActor* target = this->GetAttackTarget();
     if (target == nullptr) {
         this->AttackRequest->GetOnFail().ExecuteIfBound();

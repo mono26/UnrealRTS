@@ -24,9 +24,9 @@ class MYFIRSTRTS_API UUnitComponent : public UActorComponent, public IUnitCompon
 {
 	GENERATED_BODY()
 
+public:
 	DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE(FOnStateChangedSignature, UUnitComponent, OnCurrentStateChanged);
 
-public:
 	UPROPERTY(BlueprintAssignable, Category = "Unit")
 	FOnStateChangedSignature OnCurrentStateChanged;
 

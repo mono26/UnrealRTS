@@ -34,10 +34,15 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:
-	virtual void ExecuteAttack() override;
+private:
+	ARTSProjectile* CreateProjectile();
 
+	UFUNCTION()
+	void OnImpact();
+
+protected:
 	virtual void OnExecuteAttack() override;
 
-	void OnImpact();
+public:
+	virtual void ExecuteAttack() override;
 };
