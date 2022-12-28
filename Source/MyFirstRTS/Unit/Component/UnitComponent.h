@@ -6,7 +6,7 @@
 #include "Delegates/Delegate.h"
 #include "AIController.h"
 #include "Components/ActorComponent.h"
- #include "UnitComponentInterface.h"
+#include "UnitComponentInterface.h"
 #include "UnitComponent.generated.h"
 
 UENUM(BlueprintType)
@@ -30,7 +30,6 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Unit")
 	FOnStateChangedSignature OnCurrentStateChanged;
 
-	// TODO move current health to it's own component.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Health")
 	int HealthMax;
 

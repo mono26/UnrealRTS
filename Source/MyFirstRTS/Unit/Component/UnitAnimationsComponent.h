@@ -10,7 +10,7 @@
 #include "UnitAnimationsComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(BlueprintType, Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class MYFIRSTRTS_API UUnitAnimationsComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -25,9 +25,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Unit|Animation")
 	UAnimationAsset* AttackingAnimation;
 	UPROPERTY(EditDefaultsOnly, Category = "Unit|Animation")
-	UAnimationAsset* GatherinAnimation;
+	UAnimationAsset* GatheringAnimation;
 	UPROPERTY(EditDefaultsOnly, Category = "Unit|Animation")
-	UAnimationAsset* IdelAnimation;
+	UAnimationAsset* IdleAnimation;
 
 public:	
 	// Sets default values for this component's properties

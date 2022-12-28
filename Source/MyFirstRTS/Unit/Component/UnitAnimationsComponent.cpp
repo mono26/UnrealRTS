@@ -21,6 +21,7 @@ void UUnitAnimationsComponent::BeginPlay()
 	// ...
 	this->SkeletalMeshComponent = this->GetOwner()->FindComponentByClass<USkeletalMeshComponent>();
 	this->UnitComponent = this->GetOwner()->FindComponentByClass<UUnitComponent>();
+	this->UnitComponent->OnCurrentStateChanged.AddUObject(this, &UUnitAnimationsComponent::OnUnitStateChange);
 }
 
 // Called every frame
@@ -33,4 +34,24 @@ void UUnitAnimationsComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 void UUnitAnimationsComponent::OnUnitStateChange()
 {
+	EUnitStates currentState = this->UnitComponent->GetCurrentState();
+	switch (currentState) {
+		case EUnitStates::Idle: {
+			this->SkeletalMeshComponent->PlayAnimation(this->IdleAnimation, true);
+			break;
+		}
+		case EUnitStates::Moving: {
+			this->SkeletalMeshComponent->PlayAnimation(this->MovingAnimation, true);
+			break;
+		}
+		case EUnitStates::Gathering: {
+			this->SkeletalMeshComponent->PlayAnimation(this->GatheringAnimation, true);
+			break;
+		}
+		case EUnitStates::Attacking: {
+			this->SkeletalMeshComponent->PlayAnimation(this->AttackingAnimation, true);
+			break;
+		}
+		default: break;
+	}
 }
