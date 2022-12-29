@@ -65,7 +65,9 @@ void UUnitRangedAttackComponent::OnExecuteAttack()
 
     // Set the projectile's initial trajectory.
     FVector launchDirection = this->GetAttackTarget()->GetTargetLocation() - this->Muzzle->GetComponentLocation();
-    projectile->FireInDirection(launchDirection);
+    // projectile->FireInDirection(launchDirection);
+
+    this->AttackRequest->GetOnSuccess().ExecuteIfBound();
 }
 
 ARTSProjectile* UUnitRangedAttackComponent::CreateProjectile()
@@ -76,8 +78,6 @@ ARTSProjectile* UUnitRangedAttackComponent::CreateProjectile()
         return nullptr;
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("CreateProjectile."));
-
     UWorld* world = this->GetWorld();
     FActorSpawnParameters spawnParams;
     spawnParams.Owner = this->GetOwner();
@@ -85,24 +85,21 @@ ARTSProjectile* UUnitRangedAttackComponent::CreateProjectile()
 
     // Spawn the projectile at the muzzle.
     ARTSProjectile* projectile = world->SpawnActor<ARTSProjectile>(this->ProjectileClass, this->Muzzle->GetComponentLocation(), this->Muzzle->GetComponentRotation(), spawnParams);
+    projectile->SetProjectileCreator(this->GetOwner());
     projectile->SetOnImpact(this->OnImpactDelegate);
 
     return projectile;
 }
 
-void UUnitRangedAttackComponent::OnImpact()
+void UUnitRangedAttackComponent::OnImpact(ARTSProjectile* Projectile)
 {
-    UE_LOG(LogTemp, Warning, TEXT("OnImpact"));
-
     AActor* target = this->GetAttackTarget();
     if (target == nullptr) {
-        this->AttackRequest->GetOnFail().ExecuteIfBound();
         return;
     }
 
     ARTSUnit* asWorker = Cast<ARTSUnit>(this->GetOwner());
 
-    UGameplayStatics::ApplyDamage(target, asWorker->GetUnitComponent()->AttackDamage, asWorker->GetController(), asWorker, nullptr);
-
-    this->AttackRequest->GetOnSuccess().ExecuteIfBound();
+    TArray<AActor*> targets { target };
+    Projectile->DealDamage(asWorker->GetUnitComponent()->AttackDamage, targets);
 }

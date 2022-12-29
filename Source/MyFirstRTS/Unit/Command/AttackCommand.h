@@ -15,7 +15,7 @@ class MYFIRSTRTS_API UAttackCommand : public UUnitCommand
 	GENERATED_BODY()
 
 protected:
-	AActor* AttackTargetRef;
+	AActor* AttackTarget;
 
 	FActionSignature OnReachAttackTargetDelegate;
 

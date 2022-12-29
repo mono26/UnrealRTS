@@ -25,7 +25,7 @@ protected:
 	TSubclassOf<class ARTSProjectile> ProjectileClass;
 
 private:
-	FActionSignature OnImpactDelegate;
+	FProjectileActionSignature OnImpactDelegate;
 
 public:
 	UUnitRangedAttackComponent();
@@ -38,7 +38,7 @@ private:
 	ARTSProjectile* CreateProjectile();
 
 	UFUNCTION()
-	void OnImpact();
+	void OnImpact(ARTSProjectile* Projectile);
 
 protected:
 	virtual void OnExecuteAttack() override;

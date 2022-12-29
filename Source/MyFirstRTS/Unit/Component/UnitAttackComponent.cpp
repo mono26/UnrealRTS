@@ -42,17 +42,17 @@ void UUnitAttackComponent::ExecuteAttack()
 		return;
 	}
 
-	ARTSUnit* asWorker = Cast<ARTSUnit>(this->GetOwner());
+	ARTSUnit* asUnit = Cast<ARTSUnit>(this->GetOwner());
 
 	UInteractableComponent* interactableComponent = this->GetAttackTarget()->FindComponentByClass<UInteractableComponent>();
 
 	this->AttackRequest->SetDistanceToTarget(FVector::DistSquared(this->GetOwner()->GetActorLocation(), interactableComponent->GetClosestInteractionPositionTo(this->GetOwner())));
 
-	float swingDuration = asWorker->GetUnitComponent()->AttackSwingDuration;
+	float swingDuration = asUnit->GetUnitComponent()->AttackSwingDuration;
 
 	this->AttackTimer = new FExtendedTimer(&this->GetWorld()->GetTimerManager(), swingDuration, this->OnExecuteAttackDelegate, this->AttackRequest->GetOnFail());
 
-	asWorker->GetUnitComponent()->SetCurrentState(EUnitStates::Attacking);
+	asUnit->GetUnitComponent()->SetCurrentState(EUnitStates::Attacking);
 }
 
 void UUnitAttackComponent::ClearAttackRequest()
@@ -70,7 +70,7 @@ void UUnitAttackComponent::ClearAttackRequest()
 
 AActor* UUnitAttackComponent::GetAttackTarget() const
 {
-	return this->AttackRequest->GetAttackTargetRef();
+	return this->AttackRequest->GetAttackTarget();
 }
 
 void UUnitAttackComponent::OnExecuteAttack()
@@ -81,21 +81,21 @@ void UUnitAttackComponent::OnExecuteAttack()
 		return;
 	}
 
-	ARTSUnit* asWorker = Cast<ARTSUnit>(this->GetOwner());
+	ARTSUnit* asUnit = Cast<ARTSUnit>(this->GetOwner());
 
 	UInteractableComponent* interactableComponent = this->GetAttackTarget()->FindComponentByClass<UInteractableComponent>();
 
 	float currentDistance = FVector::DistSquared(this->GetOwner()->GetActorLocation(), interactableComponent->GetClosestInteractionPositionTo(this->GetOwner()));
-	float attackRange = asWorker->GetUnitComponent()->AttackRange;
+	float attackRange = asUnit->GetUnitComponent()->AttackRange;
 	if (this->AttackRequest->GetDistanceToTarget() < /*currentDistance*/attackRange * attackRange) {
 		UE_LOG(LogTemp, Warning, TEXT("Not in range to deal damage."), *target->GetName());
 
-		asWorker->GetOwnerCommander()->CommandComponent->ExecuteAttackCommand(this->GetAttackTarget(), asWorker, this->AttackRequest->GetOnSuccess(), this->AttackRequest->GetOnFail());
+		asUnit->GetOwnerCommander()->CommandComponent->ExecuteAttackCommand(this->GetAttackTarget(), asUnit, this->AttackRequest->GetOnSuccess(), this->AttackRequest->GetOnFail());
 
 		return;
 	}
 
-	UGameplayStatics::ApplyDamage(target, asWorker->GetUnitComponent()->AttackDamage, asWorker->GetController(), asWorker, nullptr);
+	UGameplayStatics::ApplyDamage(target, asUnit->GetUnitComponent()->AttackDamage, asUnit->GetController(), asUnit, nullptr);
 
 	this->AttackRequest->GetOnSuccess().ExecuteIfBound();
 }
@@ -111,11 +111,11 @@ void UUnitAttackComponent::SetAttackRequest(FAttackRequest Request)
 
 	AActor* oldTarget = this->GetAttackTarget();
 
-	this->AttackRequest->SetAttackTargetRef(Request.GetAttackTargetRef());
+	this->AttackRequest->SetAttackTarget(Request.GetAttackTarget());
 	this->AttackRequest->SetOnSuccess(Request.GetOnSuccess());
 	this->AttackRequest->SetOnFail(Request.GetOnFail());
 
 	if (this->OnTargetChangedEvent.IsBound()) {
-		this->OnTargetChangedEvent.Broadcast(oldTarget, Request.GetAttackTargetRef());
+		this->OnTargetChangedEvent.Broadcast(oldTarget, Request.GetAttackTarget());
 	}
 }

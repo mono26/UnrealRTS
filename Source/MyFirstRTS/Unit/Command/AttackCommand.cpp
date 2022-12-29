@@ -11,16 +11,14 @@
 
 UAttackCommand::UAttackCommand() : Super()
 {
-	this->AttackTargetRef = nullptr;
+	this->AttackTarget = nullptr;
 
 	this->OnReachAttackTargetDelegate.BindUFunction(this, FName("OnReachAttackTarget"));
 }
 
 void UAttackCommand::Execute()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Try ExecuteAttackCommand"));
-
-	if (this->AttackTargetRef == nullptr || this->UnitRef == nullptr) {
+	if (this->AttackTarget == nullptr || this->UnitRef == nullptr) {
 		UE_LOG(LogTemp, Warning, TEXT("Invalid data for attack."));
 		this->OnFail.ExecuteIfBound();
 		return;
@@ -33,13 +31,13 @@ void UAttackCommand::Execute()
 		return;
 	}
 
-	UInteractableComponent* interactableComponent = this->AttackTargetRef->FindComponentByClass<UInteractableComponent>();
+	UInteractableComponent* interactableComponent = this->AttackTarget->FindComponentByClass<UInteractableComponent>();
 
 	ARTSUnit* asWorker = Cast<ARTSUnit>(this->UnitRef);
 
 	UUnitAttackComponent* attackComponent = asWorker->FindComponentByClass<UUnitAttackComponent>();
 
-	FAttackRequest request = FAttackRequest(this->AttackTargetRef, this->OnSuccess, this->OnFail);
+	FAttackRequest request = FAttackRequest(this->AttackTarget, this->OnSuccess, this->OnFail);
 	attackComponent->SetAttackRequest(request);
 
 	UE_LOG(LogTemp, Warning, TEXT("ExecuteAttackCommand"));
@@ -55,9 +53,9 @@ void UAttackCommand::Execute()
 	asWorker->ExecuteCommand(movementCommmand);
 }
 
-void UAttackCommand::SetAttackTarget(AActor* AttackTarget)
+void UAttackCommand::SetAttackTarget(AActor* Target)
 {
-	this->AttackTargetRef = AttackTarget;
+	this->AttackTarget = Target;
 }
 
 void UAttackCommand::OnReachAttackTarget()

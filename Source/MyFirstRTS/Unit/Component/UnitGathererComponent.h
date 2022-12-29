@@ -12,7 +12,7 @@
 struct FGatherRequest
 {
 private:
-	AActor* ResourceRef;
+	AActor* TargetResource;
 
 	FActionSignature OnSuccess;
 	FActionSignature OnFail;
@@ -25,7 +25,7 @@ public:
 
 	FGatherRequest(AActor* Resource, FActionSignature OnSuccessCallback, FActionSignature OnFailCallback)
 	{
-		this->ResourceRef = Resource;
+		this->TargetResource = Resource;
 
 		this->OnSuccess = OnSuccessCallback;
 		this->OnFail = OnFailCallback;
@@ -33,7 +33,7 @@ public:
 
 	AActor* GetResourceRef() const
 	{
-		return this->ResourceRef;
+		return this->TargetResource;
 	}
 
 	FActionSignature GetOnSuccess() const
@@ -48,7 +48,7 @@ public:
 
 	void SetResourceRef(AActor* Resource)
 	{
-		this->ResourceRef = Resource;
+		this->TargetResource = Resource;
 	}
 
 	void SetOnSuccess(FActionSignature OnSuccessCallback)

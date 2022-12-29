@@ -14,7 +14,7 @@ struct FAttackRequest
 private:
 	float DistanceToTarget;
 
-	AActor* AttackTargetRef;
+	AActor* AttackTarget;
 
 	FActionSignature OnSuccess;
 	FActionSignature OnFail;
@@ -25,17 +25,17 @@ public:
 
 	}
 
-	FAttackRequest(AActor* AttackTarget, FActionSignature OnSuccessCallback, FActionSignature OnFailCallback)
+	FAttackRequest(AActor* Target, FActionSignature OnSuccessCallback, FActionSignature OnFailCallback)
 	{
-		this->AttackTargetRef = AttackTarget;
+		this->AttackTarget = Target;
 
 		this->OnSuccess = OnSuccessCallback;
 		this->OnFail = OnFailCallback;
 	}
 
-	AActor* GetAttackTargetRef() const
+	AActor* GetAttackTarget() const
 	{
-		return this->AttackTargetRef;
+		return this->AttackTarget;
 	}
 
 	FActionSignature GetOnSuccess() const
@@ -58,9 +58,9 @@ public:
 		this->DistanceToTarget = Distance;
 	}
 
-	void SetAttackTargetRef(AActor* AttackTarget)
+	void SetAttackTarget(AActor* Target)
 	{
-		this->AttackTargetRef = AttackTarget;
+		this->AttackTarget = Target;
 	}
 
 	void SetOnSuccess(FActionSignature OnSuccessCallback)

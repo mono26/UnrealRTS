@@ -9,13 +9,18 @@
 #include "../Unit/Command/UnitCommand.h"
 #include "RTSProjectile.generated.h"
 
+DECLARE_DYNAMIC_DELEGATE_OneParam(FProjectileActionSignature, ARTSProjectile*, Projectile);
+
 UCLASS()
 class MYFIRSTRTS_API ARTSProjectile : public AActor
 {
 	GENERATED_BODY()
 	
+private:
+	AActor* ProjectileCreator;
+
 public:
-	FActionSignature OnImpact;
+	FProjectileActionSignature OnImpact;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
 	USphereComponent* CollisionComponent;
@@ -35,14 +40,19 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-public:
-	// Function that initializes the projectile's velocity in the shoot direction.
-	void FireInDirection(const FVector& ShootDirection);
-
-public:
-	void SetOnImpact(FActionSignature Callback);
+private:
+	bool IsInDamageRange(AActor* ActorToDamage);
 
 	// Function that is called when the projectile hits something.
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+
+public:
+	void FireInDirection(const FVector& ShootDirection);
+
+	void DealDamage(float DamageAmount, TArray<AActor*> ActorsToDamage);
+
+	void SetProjectileCreator(AActor* Creator);
+
+	void SetOnImpact(FProjectileActionSignature Callback);
 };

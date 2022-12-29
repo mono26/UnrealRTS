@@ -17,7 +17,7 @@ public:
 	TArray<AActor*> ActiveUnits;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "FactionCommander|Component")
-	UCommanderComponent* CommandComponent = nullptr;
+	UCommanderComponent* CommandComponent;
 
 public:	
 	// Sets default values for this component's properties
