@@ -51,7 +51,7 @@ void ARTSProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor
 {
     UE_LOG(LogTemp, Warning, TEXT("OnHit"));
 
-    this->OnImpact.ExecuteIfBound();
+    this->OnImpact.ExecuteIfBound(); 
 
     if (OtherActor != this && OtherComponent->IsSimulatingPhysics()) {
         OtherComponent->AddImpulseAtLocation(ProjectileMovementComponent->Velocity * 100.0f, Hit.ImpactPoint);

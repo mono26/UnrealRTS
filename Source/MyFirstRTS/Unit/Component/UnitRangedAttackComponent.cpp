@@ -32,6 +32,7 @@ void UUnitRangedAttackComponent::ExecuteAttack()
     UInteractableComponent* interactableComponent = this->GetAttackTarget()->FindComponentByClass<UInteractableComponent>();
 
     if (asWorker == nullptr || interactableComponent == nullptr) {
+        UE_LOG(LogTemp, Warning, TEXT("There's something wrong with the unit."));
         this->AttackRequest->GetOnFail().ExecuteIfBound();
         return;
     }
@@ -52,6 +53,8 @@ void UUnitRangedAttackComponent::OnExecuteAttack()
         this->AttackRequest->GetOnFail().ExecuteIfBound();
         return;
     }
+
+    UE_LOG(LogTemp, Warning, TEXT("OnExecuteAttack."));
 
     ARTSProjectile* projectile = this->CreateProjectile();
 

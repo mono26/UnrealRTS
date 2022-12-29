@@ -19,7 +19,7 @@ class MYFIRSTRTS_API UUnitRangedAttackComponent : public UUnitAttackComponent
 private:
 	UWeaponSocketComponent* Muzzle;
 
-public:
+protected:
 	// Projectile class to spawn.
 	UPROPERTY(EditDefaultsOnly, Category = "RangedAttack")
 	TSubclassOf<class ARTSProjectile> ProjectileClass;
