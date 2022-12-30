@@ -107,8 +107,6 @@ void UUnitAttackComponent::StopAction()
 
 void UUnitAttackComponent::SetAttackRequest(FAttackRequest Request)
 {
-	UE_LOG(LogTemp, Warning, TEXT("SetAttackRequest"));
-
 	AActor* oldTarget = this->GetAttackTarget();
 
 	this->AttackRequest->SetAttackTarget(Request.GetAttackTarget());

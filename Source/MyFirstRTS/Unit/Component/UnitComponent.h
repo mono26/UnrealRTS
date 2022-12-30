@@ -30,22 +30,22 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Unit")
 	FOnStateChangedSignature OnCurrentStateChanged;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Health")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Unit|Health")
 	int HealthMax;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Attack")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Unit|Attack")
 	int AttackDamage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Attack")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Unit|Attack")
 	float AttackRange;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Attack")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Unit|Attack")
 	float AttackSwingDuration = 1.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Unit")
 	FVector UnitCenter;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Unit")
 	float UnitSize;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Unit")
 	float VisionRange;
 
 private:

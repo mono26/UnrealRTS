@@ -7,6 +7,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "../Unit/Command/UnitCommand.h"
+#include "Component/RTSProjectileMovementComponent.h"
 #include "RTSProjectile.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FProjectileActionSignature, ARTSProjectile*, Projectile);
@@ -19,14 +20,10 @@ class MYFIRSTRTS_API ARTSProjectile : public AActor
 private:
 	AActor* ProjectileCreator;
 
+	URTSProjectileMovementComponent* MovementComponent;
+
 public:
 	FProjectileActionSignature OnImpact;
-
-	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
-	USphereComponent* CollisionComponent;
-
-	UPROPERTY(VisibleAnywhere, Category = Movement)
-	UProjectileMovementComponent* ProjectileMovementComponent;
 
 public:	
 	// Sets default values for this actor's properties
@@ -48,7 +45,7 @@ private:
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
 public:
-	void FireInDirection(const FVector& ShootDirection);
+	void FireProjectile(FVector StartPoint, FVector EndPoint);
 
 	void DealDamage(float DamageAmount, TArray<AActor*> ActorsToDamage);
 

@@ -17,22 +17,19 @@ void ARTSProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	this->CollisionComponent = this->FindComponentByClass<USphereComponent>();
-    this->CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
+    // ...
+    USphereComponent* collisionComponent = this->FindComponentByClass<USphereComponent>();
+    collisionComponent->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
 
-    this->ProjectileMovementComponent = this->FindComponentByClass<UProjectileMovementComponent>();
-    this->ProjectileMovementComponent->SetUpdatedComponent(this->CollisionComponent);
-    this->ProjectileMovementComponent->InitialSpeed = 300.0f;
-    this->ProjectileMovementComponent->MaxSpeed = 300.0f;
-    this->ProjectileMovementComponent->bRotationFollowsVelocity = true;
-    this->ProjectileMovementComponent->bShouldBounce = false;
-    this->ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
+    this->MovementComponent = this->FindComponentByClass<URTSProjectileMovementComponent>();
 }
 
 // Called every frame
 void ARTSProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+    // ...
 }
 
 bool ARTSProjectile::IsInDamageRange(AActor* ActorToDamage)
@@ -46,9 +43,16 @@ bool ARTSProjectile::IsInDamageRange(AActor* ActorToDamage)
     return sqrDistance <= 0.1f;
 }
 
-void ARTSProjectile::FireInDirection(const FVector& ShootDirection)
+void ARTSProjectile::FireProjectile(FVector StartPoint, FVector EndPoint)
 {
-    this->ProjectileMovementComponent->Velocity = ShootDirection * this->ProjectileMovementComponent->InitialSpeed;
+    if (this->MovementComponent == nullptr) {
+        UE_LOG(LogTemp, Warning, TEXT("Projectile is missing movement component."));
+        return;
+    }
+
+    this->MovementComponent->SetStartPoint(StartPoint);
+    this->MovementComponent->SetEndPoint(EndPoint);
+    this->MovementComponent->StartMovement(true);
 }
 
 void ARTSProjectile::DealDamage(float DamageAmount, TArray<AActor*> ActorsToDamage)
@@ -84,6 +88,8 @@ void ARTSProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor
         UE_LOG(LogTemp, Warning, TEXT("Hit it's own creator."));
         return;
     }
+
+    this->MovementComponent->StartMovement(false);
 
     this->OnImpact.ExecuteIfBound(this);
 

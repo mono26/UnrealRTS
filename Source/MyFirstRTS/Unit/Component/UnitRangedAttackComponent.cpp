@@ -63,9 +63,7 @@ void UUnitRangedAttackComponent::OnExecuteAttack()
         return;
     }
 
-    // Set the projectile's initial trajectory.
-    FVector launchDirection = this->GetAttackTarget()->GetTargetLocation() - this->Muzzle->GetComponentLocation();
-    // projectile->FireInDirection(launchDirection);
+    projectile->FireProjectile(this->Muzzle->GetComponentLocation(), this->GetAttackTarget()->GetTargetLocation());
 
     this->AttackRequest->GetOnSuccess().ExecuteIfBound();
 }
@@ -98,8 +96,8 @@ void UUnitRangedAttackComponent::OnImpact(ARTSProjectile* Projectile)
         return;
     }
 
-    ARTSUnit* asWorker = Cast<ARTSUnit>(this->GetOwner());
+    ARTSUnit* asUnit = Cast<ARTSUnit>(this->GetOwner());
 
     TArray<AActor*> targets { target };
-    Projectile->DealDamage(asWorker->GetUnitComponent()->AttackDamage, targets);
+    Projectile->DealDamage(asUnit->GetUnitComponent()->AttackDamage, targets);
 }

@@ -21,7 +21,7 @@ private:
 
 protected:
 	// Projectile class to spawn.
-	UPROPERTY(EditDefaultsOnly, Category = "RangedAttack")
+	UPROPERTY(EditAnywhere, Category = "RangedAttack")
 	TSubclassOf<class ARTSProjectile> ProjectileClass;
 
 private:
